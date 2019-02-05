@@ -52,30 +52,30 @@ module.exports = () => {
     }
   }
 // ***************************************************************************
-  result.newBeacons = async (req, res, next) => {
+result.newBeacons = async (req, res, next) => {
 
     try {
-      if (!req.body || !req.body.id) {
+      if (!req.body || !req.body.userId) {
         throw new Error('UserId not defined...');
       }
       if (!req.body || !req.body.sqrId) {
         throw new Error('SqrId not defined...');
       }
 
-      // if (!req.body || !req.body.campaignId) {
-      //   throw new Error('CampaignId not defined...');
-      // }
+      if (!req.body || !req.body.campaignId) {
+        throw new Error('CampaignId not defined...');
+      }
 
-    let id = req.body.id;
+    let userId = req.body.userId;
     let sqrId = req.body.sqrId;
-    //let campaignId = req.body.campaignId;
+    let campaignId = req.body.campaignId;
     let name = req.body.name || '';
     let place = req.body.place || '';
 
     let beacon = new Beacon({
-      id: id,
+      userId: userId,
       sqrId:sqrId,
-      //campaignId:campaignId,
+      campaignId:campaignId,
       name:name,
       place:place
     });
@@ -94,6 +94,7 @@ module.exports = () => {
       })
     }
   }
+//*************************************************************************************
   result.updateBeacon = async (req, res, next) => {
      try {
       if (!req.body || !req.body.userId) {
