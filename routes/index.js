@@ -24,7 +24,7 @@ router.post('/logout',isLoggedIn,userController.logout);
 
 //beacon
 router.post('/beacons',isLoggedIn,beaconController.allBeacons);
-//router.post('/create_beacon',isLoggedIn,beaconController.newBeacons);
+router.post('/create_beacon',beaconController.newBeacons);
 
 //advertisement
 router.post('/advertisements',isLoggedIn,advertiseController.advertisementsList);
