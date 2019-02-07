@@ -38,9 +38,9 @@ module.exports = () => {
         throw new Error('campaignContents not defined.');
       }
 
-      if (!req.body || !req.body.image) {
-        throw new Error('image not defined.');
-      }
+      // if (!req.body || !req.body.image) {
+      //   throw new Error('image not defined.');
+      // }
       
       if (!req.body || !req.body.action) {
         throw new Error('action not defined.');

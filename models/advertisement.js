@@ -17,8 +17,8 @@ var advertisement = new mongoose.Schema({
 		//unique: true
 	},
 	image:{
-		type: Array,
-		allowNull: false
+		type: Array
+		//allowNull: false
 		//unique: true
 	},
 	action:{

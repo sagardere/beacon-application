@@ -48,7 +48,7 @@ module.exports = () => {
               $set: {token: Token}
             };
             req.session.email = email;
-            //console.log(req.session.token);
+            console.log(req.session.email);
        let updateUser = await User.findOneAndUpdate({
               email: email
             }, query, {
@@ -57,7 +57,7 @@ module.exports = () => {
        if(!updateUser) throw new Error('Error in updating user.');
     res.json({
       success: true,
-      data: {email: updateUser.email, token: updateUser.token, id: updateUser._id}
+      data: {firstname: updateUser.username.firstname, email: updateUser.email, token: updateUser.token, id: updateUser._id}
     });
     } catch (err) {
       return res.json({
