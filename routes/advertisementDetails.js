@@ -28,22 +28,24 @@ result.openAdvertisement = async(req, res, next)=>{
    //      throw new Error('time not defined.');
    //    }
       		if (!req.body || !req.body.status) {
-        throw new Error('endTime not defined.');
+        throw new Error('status not defined.');
       }
-      const today = new Date();
-      const time =  today.getTime();
-      const date = today.getDate();
-      // const date = req.body.date;
-      // const time = req.body.time;
-      	 const status = req.body.status;
+      var today = new Date();
+      // const time =  today.getTime();
+      // const date = Date.now();
+        // const date = req.body.date;
+        // const time = req.body.time;
+      	const status = req.body.status;
 
       const openAdd = new AdvertisementData({
-      	date:date,
-      	time:time,
+        details:{
+      	datetime:today,
+      	//time:time,
       	status:status
+      }
       });
-
-      console.log(openAdd);
+      console.log(today);
+      //console.log(openAdd);
 
       //save Advertisement data in dbs
       let newAddOpen = await openAdd.save();
@@ -51,6 +53,7 @@ result.openAdvertisement = async(req, res, next)=>{
       res.json({
           success: true,
           message: "Advertisement data successfully added..."
+          //data: openAdd
         });
 	}catch (err) {
       return res.json({

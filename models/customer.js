@@ -18,7 +18,7 @@ var customer = new mongoose.Schema({
 		type:Date,
 		required:true
 	},
-	mobile:{               //LoginID of user
+	mobile:{               //LoginID of Customer
 		type:String,
 		required:true,
 		unique: true

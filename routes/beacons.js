@@ -2,73 +2,79 @@ const mongoose = require('mongoose');
 let models = require('../models/index')();
 const async = require('async');
 let Beacon = models.beacon();
+let Campaign = models.campaign();
 let User = models.user();
+var ObjectId = require('mongoose').Types.ObjectId;
 module.exports = () => {
   var result = {};
-  result.allBeacons = async (req, res, next) => {
+  
+result.beaconList = async(req, res, next) => {
+  console.log("Inside beaconList");
+  try{
+      const userId = req.body.id;
+      var list = [];
+      
+      let beaconData = await Beacon.find({
+        userId: userId
+      });
 
-  console.log("getting beacons")
-  // console.log(req.body.user)
-  Beacon.find({
-          "userId": req.body.id
-        }).exec((err, beaconList) => {
-          if (err) {
-            res.json({
-              success: false,
-              message: 'Error getting beacons'
-            })
-          } else {
-            res.json({
-              success: true,
-              data: beaconList
-            })
-          }
-        })
-}
+       async.eachSeries(beaconData, async function(beacon, eachCB) {
+        //console.log(beacon);
+          let obj = {};
+          obj.name = beacon.name;
+          obj.place = beacon.place;
+          
+        let beaconId = new ObjectId(beacon._id);
+        let date = new Date();
+        let ISOdate = date.toISOString();
 
+        console.log(beaconId);
 
-// ***************************************************************************
-  result.beaconList = async (req, res, next) => {
-    try {
-      if (!req.params || !req.params.rootId) {
-        throw new Error('RootId not defined...');
-      }
-      let rootId = req.params.rootId;
+        let campaignTitle = await Campaign.find({ 
+          $and:[{'schedule.startDate':{$lte:ISOdate}},{'schedule.endDate':{$gte:ISOdate}},{beaconId:beaconId}]
+          },{campaignTitle:1, _id:0});
+        console.log(campaignTitle);
 
-      if(rootId == 'root'){
-        let beaconsList = await Beacon.find({});
-        if(!beaconsList) throw new Error('Becon list empty...');
-          res.json({
-            success:true,
-            data:beaconsList
-          });
-      }
-      throw new Error('Not a admin...');
-    } catch (err) {
+        if(!campaignTitle) campaignTitle = '';
+
+        obj.campaignTitle = campaignTitle;
+        
+        list.push(obj);
+        //eachCB();
+
+        
+      }, (err, data) => {
+        console.log('Done For All.');
+        res.json({
+          success: true,
+          data: list
+        });
+      });
+
+  }catch (err) {
       return res.json({
         success: false,
         message: err.toString()
       })
     }
-  }
+}
 // ***************************************************************************
 result.newBeacons = async (req, res, next) => {
 
     try {
-      if (!req.body || !req.body.userId) {
-        throw new Error('UserId not defined...');
-      }
-      if (!req.body || !req.body.sqrId) {
-        throw new Error('SqrId not defined...');
-      }
+      
+      // if (!req.body || !req.body.sqrId) {
+      //   throw new Error('SqrId not defined...');
+      // }
 
-      if (!req.body || !req.body.campaignId) {
-        throw new Error('CampaignId not defined...');
-      }
+      // if (!req.body || !req.body.campaignId) {
+      //   throw new Error('CampaignId not defined...');
+      // }
 
-    let userId = req.body.userId;
-    let sqrId = req.body.sqrId;
-    let campaignId = req.body.campaignId;
+    let userId = req.body.id || '';
+    let sqrId = req.body.sqrId || '';
+    let campaignId = req.body.campaignId || '';
+    let campaignTitle = req.body.campaignTitle || '';
     let name = req.body.name || '';
     let place = req.body.place || '';
 
@@ -76,6 +82,7 @@ result.newBeacons = async (req, res, next) => {
       userId: userId,
       sqrId:sqrId,
       campaignId:campaignId,
+      campaignTitle:campaignTitle,
       name:name,
       place:place
     });
@@ -94,79 +101,7 @@ result.newBeacons = async (req, res, next) => {
       })
     }
   }
-//*************************************************************************************
-  result.updateBeacon = async (req, res, next) => {
-     try {
-      if (!req.body || !req.body.userId) {
-        throw new Error('userId not defined...');
-      }
-
-      // if (!req.body || !req.body.campaignId) {
-      //   throw new Error('Campaign id not defined...');
-      // }
-
-        let id = req.params.id;
-        let userId = req.body.userId;
-        //let campaignId = req.body.campaignId;
-        let name = req.body.name;
-        let place = req.body.place;
-
-        let obj = {
-          userId:userId,
-          name:name,
-          place:place,
-          //campaignId:campaignId
-        };
-        let query = {
-          $set : obj
-        };
-
-        let updateBeacon = await Beacon.findOneAndUpdate({
-                    _id : id
-                  },query);
-        if (!updateBeacon) throw new Error('Error in updating beacons...');
-        res.json({
-          success:true,
-          message:'Beacon updated...',
-          data:updateBeacon
-         });
-    } catch (err) {
-      return res.json({
-        success: false,
-        message: err.toString()
-      })
-    }
-    // let id = req.params.id;
-    // let userId = req.body.userId;
-    // let Name = req.body.Name;
-    // let place = req.body.place;
-    // let campaignId = req.body.campaignId;
-    // let obj = {
-    //   userId: userId,
-    //   Name: Name,
-    //   place: place,
-    //   campaignId: campaignId
-    // };
-    // let query = {
-    //   $set: obj
-    // };
-    // Beacon.findOneAndUpdate({
-    //     _id: id
-    //   }, query,
-    //   (err, data) => {
-    //     if (err) {
-    //       res.json({
-    //         success: false,
-    //         message: 'Error in beacon updating...'
-    //       })
-    //     } else {
-    //       res.json({
-    //         success: true,
-    //         message: "Beacon updated!!!"
-    //       })
-    //     }
-    //   })
-  }
+  
   return result;
 }
 

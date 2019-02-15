@@ -2,67 +2,94 @@ const mongoose = require('mongoose');
 let models = require('../models/index')();
 let User = models.user();
 let Advertisement = models.advertisement();
+let Campaign = models.campaign();
+var ObjectId = require('mongoose').Types.ObjectId;
 async = require('async');
 
 
 module.exports = () => {
   var result = {};
-  //Get
-  result.advertisementsList = (req, res) => {
-
-    Advertisement.find({"userId":req.body.id}).exec((err,advertisementList) => {
-          if(err) return next(err);
-          res.json({
-            success:true,
-            data:advertisementList
-          })
-    })
-
-  }
   
-  //Post
+result.advertisementList = async(req, res, next) => {
+  console.log("Inside advertisementList");
+  try{
+      const userId = req.body.id;
+      var list = [];
+      
+      let advertisementData = await Advertisement.find({
+        userId: userId
+      });
+
+        async.eachSeries(advertisementData,async function(advertisement, eachCB) {
+        
+          let obj = {};
+          obj.advertisementTitle = advertisement.advertisementTitle;
+          
+          let advertisementId = new ObjectId(advertisement._id);
+
+          let campaignTitle = await Campaign.find({
+            advertisementId: advertisementId
+          },{campaignTitle:1, _id:0});
+
+        if(!campaignTitle) campaignTitle= '';
+
+        obj.campaignTitle = campaignTitle;
+        
+        list.push(obj);
+        //eachCB();
+
+        
+      }, (err, data) => {
+        console.log('Done For All.');
+        res.json({
+          success: true,
+          data: list
+        });
+      });
+
+  }catch (err) {
+      return res.json({
+        success: false,
+        message: err.toString()
+      })
+    }
+}
+// ***************************************************************************
+//Post
   result.newAdvertisements = async (req, res, next) => {
     try{
 
-      if (!req.body || !req.body.advertisementName) {
-        throw new Error('advertisementName not defined.');
+      if (!req.body || !req.body.advertisementTitle) {
+        throw new Error('advertisementTitle not defined.');
       }
-      if (!req.body || !req.body.id) {
-        throw new Error('UserId not defined.');
-      }
-      if (!req.body || !req.body.campaignTitle) {
-        throw new Error('campaignTitle not defined.');
-      }
-
-      if (!req.body || !req.body.campaignContents) {
-        throw new Error('campaignContents not defined.');
+      
+      if (!req.body || !req.body.advertisementContents) {
+        throw new Error('advertisementContents not defined.');
       }
 
       // if (!req.body || !req.body.image) {
       //   throw new Error('image not defined.');
       // }
       
-      if (!req.body || !req.body.action) {
-        throw new Error('action not defined.');
-      }
+      // if (!req.body || !req.body.action) {
+      //   throw new Error('action not defined.');
+      // }
 
-      if (!req.body || !req.body.actionTarget) {
-        throw new Error('actionTarget not defined.');
-      }
+      // if (!req.body || !req.body.actionTarget) {
+      //   throw new Error('actionTarget not defined.');
+      // }
 
-    let advertisementName = req.body.advertisementName || '';
-    let id = req.body.id || '';
-    let campaignTitle = req.body.campaignTitle || '';
-    let campaignContents = req.body.campaignContents || '';
+    let advertisementTitle = req.body.advertisementTitle || '';
+    let userId = req.body.id || '';
+    let advertisementContents = req.body.advertisementContents || '';
     let image = req.body.image || '';
     let action = req.body.action || '';
     let actionTarget = req.body.actionTarget || '';
 
     let advertisement = new Advertisement({
-      advertisementName:advertisementName,
-      id: id,
-      campaignTitle:campaignTitle,
-      campaignContents:campaignContents,
+      advertisementTitle:advertisementTitle,
+      userId: userId,
+      advertisementContents:advertisementContents,
       image:image,
       action:action,
       actionTarget:actionTarget     
@@ -85,3 +112,4 @@ module.exports = () => {
 }
  return result;
 }
+// ***************************************************************************

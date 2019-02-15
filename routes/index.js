@@ -23,16 +23,18 @@ router.post('/login',userController.login);
 router.post('/logout',isLoggedIn,userController.logout);
 
 //beacon
-router.post('/beacons',isLoggedIn,beaconController.allBeacons);
 router.post('/create_beacon',beaconController.newBeacons);
+router.post('/beaconsList',isLoggedIn,beaconController.beaconList);
 
 //advertisement
-router.post('/advertisements',isLoggedIn,advertiseController.advertisementsList);
 router.post('/create_advertisement',isLoggedIn,advertiseController.newAdvertisements);
+router.post('/advertisementsList',isLoggedIn,advertiseController.advertisementList);
 
 //campaigns
-router.post('/campaigns',isLoggedIn,campaignController.campaignsList);
 router.post('/create_campaign',isLoggedIn,campaignController.newCampaigns);
+router.post('/assignBeacon',isLoggedIn,campaignController.assignBeacon);
+router.post('/campaignsList',isLoggedIn,campaignController.campaignList);
+
 
 //customer
 router.post('/registerCustomer',customerController.registerCustomer);

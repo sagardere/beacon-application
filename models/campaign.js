@@ -5,17 +5,18 @@ var campaign = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
-  beaconID: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'beacon'
+  beaconId: {  
+    type: String 
+    // type: mongoose.Schema.Types.ObjectId,
+    // ref: 'beacon'
   },
-  advertisementID: {
+  advertisementId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'advertisement'
   },
-  advertisementName: {
-      type: String,
-      allowNull: false
+  campaignTitle:{
+      type: String
+      //allowNull: false
   },
   schedule: {
     startTime: {

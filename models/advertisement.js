@@ -6,12 +6,12 @@ var advertisement = new mongoose.Schema({
 	userId:{type: mongoose.Schema.Types.ObjectId,
 				ref: 'user'
 	},
-	campaignTitle: {
+	advertisementTitle: {
 		type: String,
 		allowNull: false
 		//unique: true,
 	},
-	campaignContents:{
+	advertisementContents:{
 		type: String,
 		allowNull: false
 		//unique: true

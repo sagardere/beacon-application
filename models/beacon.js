@@ -6,12 +6,20 @@ var beacon = new mongoose.Schema({
 	userId:{type: mongoose.Schema.Types.ObjectId,
 				ref: 'user'
 	},
-	campaignId:{type: mongoose.Schema.Types.ObjectId,
-				ref: 'campaign'
+	campaignId:{
+		type: String
+		// type: mongoose.Schema.Types.ObjectId,
+		// 		ref: 'campaign'
 	},
+	campaignTitle: {
+		type: String
+		//allowNull: false
+		//unique: true,
+	},
+
 	sqrId: {
-		type: String,
-		allowNull: false
+		type: String
+		//allowNull: false
 		//unique: true,
 	},
 	name:{
