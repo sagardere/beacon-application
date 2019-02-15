@@ -16,6 +16,7 @@ module.exports = () => {
       
       const userId = req.body.id;
       var list = [];
+      var uniqueId = 123456;
 
       let campaignData = await Campaign.find({
         userId: userId
@@ -29,7 +30,8 @@ module.exports = () => {
           obj.startTime = campaign.schedule.startTime;
           obj.endTime = campaign.schedule.endTime;
           obj.daysOfWeek = campaign.schedule.daysOfWeek;
-
+          obj.uniqueId = uniqueId;
+          uniqueId++;
         let advertisementId = new ObjectId(campaign.advertisementId);
         let beaconId = new ObjectId(campaign.beaconId);
         
@@ -87,17 +89,23 @@ module.exports = () => {
       // if (!req.body || !req.body.endDate) {
       //   throw new Error('endDate not defined.');
       // }
-      if (!req.body || !req.body.targetAge) {
-        throw new Error('targetAge not defined.');
-         }
 
+        console.log(req.body.startDate);
+        console.log(req.body.endDate);
+      
+      
       if((req.body.startDate != "") && (req.body.startDate != undefined)){
-        var startDate = helper.stringToDate(req.body.startDate,"dd/MM/yyyy","/");
-    }
+          var startDate = helper.stringToDate(req.body.startDate);
+          //console.log(startDate);
+      }
 
       if((req.body.endDate != "") && (req.body.endDate != undefined)){
-        var endDate = helper.stringToDate(req.body.endDate,"dd/MM/yyyy","/");
-    }
+          var endDate = helper.stringToDate(req.body.endDate);
+          //console.log(endDate);
+      }
+      if (!req.body || !req.body.targetAge) {
+        throw new Error('targetAge not defined.');
+      }
      
       let userId = req.body.id || '';
       let advertisementId = req.body.advertisementId || '';

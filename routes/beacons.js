@@ -13,6 +13,7 @@ result.beaconList = async(req, res, next) => {
   try{
       const userId = req.body.id;
       var list = [];
+      var uniqueId = 123456;
       
       let beaconData = await Beacon.find({
         userId: userId
@@ -23,6 +24,8 @@ result.beaconList = async(req, res, next) => {
           let obj = {};
           obj.name = beacon.name;
           obj.place = beacon.place;
+          obj.uniqueId= uniqueId;
+          uniqueId++;
           
         let beaconId = new ObjectId(beacon._id);
         let date = new Date();

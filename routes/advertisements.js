@@ -15,6 +15,7 @@ result.advertisementList = async(req, res, next) => {
   try{
       const userId = req.body.id;
       var list = [];
+      var uniqueId = 123456;
       
       let advertisementData = await Advertisement.find({
         userId: userId
@@ -23,7 +24,10 @@ result.advertisementList = async(req, res, next) => {
         async.eachSeries(advertisementData,async function(advertisement, eachCB) {
         
           let obj = {};
+          obj.advertisementId = advertisement.advertisementId;
           obj.advertisementTitle = advertisement.advertisementTitle;
+          obj.uniqueId= uniqueId;
+          uniqueId++;
           
           let advertisementId = new ObjectId(advertisement._id);
 
