@@ -16,22 +16,21 @@ module.exports = () => {
       
       const userId = req.body.id;
       var list = [];
-      var uniqueId = 123456;
-
+      
       let campaignData = await Campaign.find({
         userId: userId
       }).lean();
 
       async.eachSeries(campaignData,async function(campaign, eachCB) {
           let obj = {};
+          obj.campaignId = campaign._id;
           obj.campaignTitle = campaign.campaignTitle;
           obj.startDate = campaign.schedule.startDate;
           obj.endDate = campaign.schedule.endDate;
           obj.startTime = campaign.schedule.startTime;
           obj.endTime = campaign.schedule.endTime;
           obj.daysOfWeek = campaign.schedule.daysOfWeek;
-          obj.uniqueId = uniqueId;
-          uniqueId++;
+
         let advertisementId = new ObjectId(campaign.advertisementId);
         let beaconId = new ObjectId(campaign.beaconId);
         
@@ -39,8 +38,7 @@ module.exports = () => {
        let {advertisementTitle} = await Advertisement.findOne({
         _id: advertisementId
         },{advertisementTitle:1, _id: 0});
-       //console.log(advertisementTitle);
-
+       
         let {name} = await Beacon.findOne({
         _id: beaconId
         },{name:1, _id: 0});
@@ -52,7 +50,6 @@ module.exports = () => {
         obj.advertisementTitle= advertisementTitle;
         obj.name = name;
 
-        //console.log(obj);
         list.push(obj);
         
       }, (err, data) => {

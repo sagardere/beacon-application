@@ -13,31 +13,27 @@ result.beaconList = async(req, res, next) => {
   try{
       const userId = req.body.id;
       var list = [];
-      var uniqueId = 123456;
       
       let beaconData = await Beacon.find({
         userId: userId
       });
 
        async.eachSeries(beaconData, async function(beacon, eachCB) {
-        //console.log(beacon);
+        
           let obj = {};
+          obj.beaconId = beacon._id;
           obj.name = beacon.name;
           obj.place = beacon.place;
-          obj.uniqueId= uniqueId;
-          uniqueId++;
+
           
         let beaconId = new ObjectId(beacon._id);
         let date = new Date();
         let ISOdate = date.toISOString();
 
-        console.log(beaconId);
-
         let campaignTitle = await Campaign.find({ 
           $and:[{'schedule.startDate':{$lte:ISOdate}},{'schedule.endDate':{$gte:ISOdate}},{beaconId:beaconId}]
           },{campaignTitle:1, _id:0});
-        console.log(campaignTitle);
-
+        
         if(!campaignTitle) campaignTitle = '';
 
         obj.campaignTitle = campaignTitle;
