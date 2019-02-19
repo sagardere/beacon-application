@@ -57,6 +57,7 @@ result.beaconList = async(req, res, next) => {
       })
     }
 }
+
 // ***************************************************************************
 result.newBeacons = async (req, res, next) => {
 
@@ -100,6 +101,71 @@ result.newBeacons = async (req, res, next) => {
       })
     }
   }
+// ***************************************************************************
+result.updateBeacons = async (req, res, next) => {
+  try{
+    if (!req.body || !req.body.id) {
+        throw new Error('userId not defined.');
+      }
+      
+      if (!req.body || !req.body.beaconId) {
+        throw new Error('beaconId not defined.');
+      }
+      
+      // if (!req.body || !req.body.campaignId) {
+      //   throw new Error('campaignId not defined.');
+      // }
+
+      // if (!req.body || !req.body.campaignTitle) {
+      //   throw new Error('campaignTitle not defined.');
+      // }
+      
+      if (!req.body || !req.body.name) {
+        throw new Error('name not defined.');
+      }
+
+      if (!req.body || !req.body.place) {
+        throw new Error('place not defined.');
+      }
+    let beaconId = req.body.beaconId;
+    let campaignId = req.body.campaignId || '';
+    let userId = req.body.id || '';
+    let campaignTitle = req.body.campaignTitle || '';
+    let name = req.body.name || '';
+    let place = req.body.place || '';
+    
+
+    let obj = {
+      campaignId:campaignId,
+      userId:userId,
+      campaignTitle:campaignTitle,
+      name:name,
+      place:place
+      
+    }
+
+    let query = {
+      $set: obj
+    }
+
+    let updateBeacon = await Beacon.findOneAndUpdate({
+                    _id : beaconId
+                  },query,{new: true});
+    console.log(updateBeacon);
+        if (!updateBeacon) throw new Error('Error in updating beacon...');
+        res.json({
+          success:true,
+          message:'Beacon updated...',
+          data:updateBeacon
+         });
+
+  }catch (err) {
+      return res.json({
+        success: false,
+        message: err.toString()
+      })
+    }
+}
   
   return result;
 }

@@ -113,6 +113,71 @@ result.advertisementList = async(req, res, next) => {
     }
 
 }
+// ***************************************************************************
+result.updateAdvertisement = async (req, res, next) => {
+  try{
+    if (!req.body || !req.body.advertisementTitle) {
+        throw new Error('advertisementTitle not defined.');
+      }
+      
+      if (!req.body || !req.body.advertisementContents) {
+        throw new Error('advertisementContents not defined.');
+      }
+
+      // if (!req.body || !req.body.image) {
+      //   throw new Error('image not defined.');
+      // }
+      
+      // if (!req.body || !req.body.action) {
+      //   throw new Error('action not defined.');
+      // }
+
+      // if (!req.body || !req.body.actionTarget) {
+      //   throw new Error('actionTarget not defined.');
+      // }
+    let advertisementId = req.body.advertisementId;
+    console.log(advertisementId);
+    let advertisementTitle = req.body.advertisementTitle || '';
+    let userId = req.body.id || '';
+    let advertisementContents = req.body.advertisementContents || '';
+    let image = req.body.image || '';
+    let action = req.body.action || '';
+    let actionTarget = req.body.actionTarget || '';
+
+    let obj = {
+      advertisementTitle:advertisementTitle,
+      userId:userId,
+      advertisementContents:advertisementContents,
+      image:image,
+      action:action,
+      actionTarget:actionTarget
+
+    }
+
+    let query = {
+      $set: obj
+    }
+
+    let updateAdv = await Advertisement.findOneAndUpdate({
+                    _id : advertisementId
+                  },query,{new: true});
+    console.log(updateAdv);
+        if (!updateAdv) throw new Error('Error in updating advertisement...');
+        res.json({
+          success:true,
+          message:'Advertisement updated...',
+          data:updateAdv
+         });
+
+  }catch (err) {
+      return res.json({
+        success: false,
+        message: err.toString()
+      })
+    }
+}
+
  return result;
 }
 // ***************************************************************************
+
