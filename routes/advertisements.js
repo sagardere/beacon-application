@@ -114,6 +114,33 @@ result.advertisementList = async(req, res, next) => {
 
 }
 // ***************************************************************************
+result.advertisementDetails = async(req, res, next)=>{
+  console.log('Inside AdvertisementDetails');
+  try{
+
+     if (!req.body || !req.body.advertisementId) {
+        throw new Error('advertisementId not defined.');
+      }
+      let advertisementId = req.body.advertisementId || '';
+      
+      let advertisementData = await Advertisement.find({
+            _id: advertisementId
+          });
+     
+      if(!advertisementData) advertisementData= '';
+      res.json({
+          success: true,
+          data: advertisementData
+        });
+
+  }catch (err) {
+      return res.json({
+        success: false,
+        message: "Error in getting Advertisement Details.."
+      })
+    }
+}
+// ***************************************************************************
 result.updateAdvertisement = async (req, res, next) => {
   try{
     if (!req.body || !req.body.advertisementTitle) {
@@ -136,7 +163,6 @@ result.updateAdvertisement = async (req, res, next) => {
       //   throw new Error('actionTarget not defined.');
       // }
     let advertisementId = req.body.advertisementId;
-    console.log(advertisementId);
     let advertisementTitle = req.body.advertisementTitle || '';
     let userId = req.body.id || '';
     let advertisementContents = req.body.advertisementContents || '';
@@ -161,7 +187,7 @@ result.updateAdvertisement = async (req, res, next) => {
     let updateAdv = await Advertisement.findOneAndUpdate({
                     _id : advertisementId
                   },query,{new: true});
-    console.log(updateAdv);
+    
         if (!updateAdv) throw new Error('Error in updating advertisement...');
         res.json({
           success:true,
