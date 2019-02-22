@@ -252,7 +252,7 @@ result.updateCampaign = async (req, res, next)=>{
     let updateCampaign = await Campaign.findOneAndUpdate({
                     _id : campaignId
                   },query,{new: true});
-    console.log(updateCampaign);
+    //console.log(updateCampaign);
     
         if (!updateCampaign) throw new Error('Error in updating campaign..');
         res.json({
@@ -343,4 +343,4 @@ result.updateCampaign = async (req, res, next)=>{
     }
   }
   return result;
-}
+}//****************************************************************************************
