@@ -5,11 +5,11 @@ var campaign = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
-  beaconId: {  
+  beaconId: [{  
     type: String 
     // type: mongoose.Schema.Types.ObjectId,
     // ref: 'beacon'
-  },
+  }],
   advertisementId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'advertisement'
@@ -33,25 +33,27 @@ var campaign = new mongoose.Schema({
       type: Date,
       allowNull: false
     },
-    daysOfWeek: {
+    daysOfWeek: [{
       type: String,
       enum: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-    }
+    }]
   },
   gender: {
     type: String,
     enum: ['male','female']
-    //unique: true
+    
   },
   targetAge: {
-    type: Number
-    //unique: true
+    minage: {
+      type: Number
+    },
+    maxage: {
+      type: Number
+    }
   },
 
   status: {
     type: String
-    //allowNull: false
-    //unique: true
   }
 });
 module.exports = campaign;

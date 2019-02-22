@@ -36,7 +36,7 @@ router.post('/advertisementsList',isLoggedIn,advertiseController.advertisementLi
 //campaigns
 router.post('/create_campaign',isLoggedIn,campaignController.newCampaigns);
 router.post('/campaignDetails',isLoggedIn,campaignController.campaignDetails);
-//router.post('/update_campaign',isLoggedIn,campaignController.updateCampaign);
+router.post('/update_campaign',isLoggedIn,campaignController.updateCampaign);
 router.post('/assignBeacon',isLoggedIn,campaignController.assignBeacon);
 router.post('/campaignsList',isLoggedIn,campaignController.campaignList);
 
