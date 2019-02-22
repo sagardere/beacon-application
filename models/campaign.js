@@ -6,7 +6,7 @@ var campaign = new mongoose.Schema({
     ref: 'user'
   },
   beaconId: [{  
-    type: String 
+    type: String
     // type: mongoose.Schema.Types.ObjectId,
     // ref: 'beacon'
   }],

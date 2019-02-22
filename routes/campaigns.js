@@ -122,7 +122,7 @@ module.exports = () => {
       let campaign = new Campaign({
         userId: userId,
         advertisementId: advertisementId,
-        beaconId: beaconId,
+        beaconId: [],
         campaignTitle: campaignTitle,
         schedule: {
           startTime: startTime,
@@ -281,30 +281,12 @@ result.updateCampaign = async (req, res, next)=>{
       let campaignId = req.body.campaignId;
       let beaconId = req.body.beaconId;
 
-      // Campaign.findOne({
-      //   _id: campaignId
-      // },{upsert:true},function(err,result){
-      //   if(err){ 
-      //     res.send("Campaign not found");
-      //   } 
-      //   else {
-      //   result.beaconId = beaconId;
-      //   //console.log(result);
-      //   result.save();
-      //   res.json({
-      //     success: true,
-      //     message: 'Beacon assigned...',
-      //     data: {beaconId:result.beaconId}
-      //   });
-      //   }
-
-      //  })
       let obj ={
         "beaconId":beaconId
       }
 
       let query = {
-      $set: obj
+      $push: obj    
       }
 
       let updateCampaign = await Campaign.findOneAndUpdate({
@@ -317,23 +299,6 @@ result.updateCampaign = async (req, res, next)=>{
           message:'Beacon assigned...',
           data:{beaconId:updateCampaign.beaconId}
          });
-
-
-
-
-      // Campaign.findOneAndUpdate({ _id: campaignId},{$set:{beaconId:beaconId}},
-      // {new:true}).then((err,b1)=>{
-      //   if(err){
-      //     res.send(err)
-      //   }
-      //   else{
-      //     res.json({
-      //     success: true,
-      //     message: 'Beacon assigned...',
-      //     data: {beaconId:b1.beaconId}
-      //   });
-      //   }
-      // })
 
     } catch (err) {
       return res.json({
