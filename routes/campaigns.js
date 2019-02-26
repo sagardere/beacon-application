@@ -19,9 +19,11 @@ module.exports = () => {
       
       let campaignData = await Campaign.find({
         userId: userId
-      }).lean();
+      });
+      
 
-      async.eachSeries(campaignData,async function(campaign, eachCB) {
+      async.eachSeries(campaignData, async(campaign, eachCB) =>{
+        
           let obj = {};
           obj.campaignId = campaign._id;
           obj.campaignTitle = campaign.campaignTitle;
@@ -30,28 +32,27 @@ module.exports = () => {
           obj.startTime = campaign.schedule.startTime;
           obj.endTime = campaign.schedule.endTime;
           obj.daysOfWeek = campaign.schedule.daysOfWeek;
-
+          
         let advertisementId = new ObjectId(campaign.advertisementId);
-        let beaconId = new ObjectId(campaign.beaconId);
         
+        let beaconId = campaign.beaconId;
 
        let {advertisementTitle} = await Advertisement.findOne({
         _id: advertisementId
         },{advertisementTitle:1, _id: 0});
        
-        let {name} = await Beacon.findOne({
+        let name = await Beacon.find({
         _id: beaconId
         },{name:1, _id: 0});
         
         if(!advertisementTitle) advertisementTitle = '';
         if(!name) name = '';
-        
 
         obj.advertisementTitle= advertisementTitle;
         obj.name = name;
-
-        list.push(obj);
         
+        list.push(obj);
+        //eachCB();
       }, (err, data) => {
         console.log('Done For All.');
         res.json({
