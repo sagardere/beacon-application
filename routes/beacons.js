@@ -16,11 +16,11 @@ result.beacons = async(req, res) => {
         _id: beaconId
       });
      if(!beaconData) throw new Error('Error in getting data.');
-    console.log(beaconData)
+    //console.log(beaconData[0].name)
     res.json({
           success: true,
-          data: {name: beaconData.name, place: beaconData.place}//beaconData
-          // {name: beaconData.name}
+          data: {name: beaconData[0].name}//beaconData
+          
         });
   }catch (err) {
       return res.json({
