@@ -21,11 +21,13 @@ router.get('/',function(req, res){
 //user
 router.post('/login',userController.login);
 router.post('/logout',isLoggedIn,userController.logout);
+router.post('/changePassword',userController.changePassword);
 
 //beacon
 router.post('/create_beacon',beaconController.newBeacons);
 router.post('/update_beacon',isLoggedIn,beaconController.updateBeacons);
 router.post('/beaconsList',isLoggedIn,beaconController.beaconList);
+router.post('/beacons',isLoggedIn,beaconController.beacons);
 
 //advertisement
 router.post('/create_advertisement',isLoggedIn,advertiseController.newAdvertisements);
@@ -45,12 +47,13 @@ router.post('/campaignsList',isLoggedIn,campaignController.campaignList);
 router.post('/registerCustomer',customerController.registerCustomer);
 router.post('/loginCustomer',customerController.loginCustomer);
 router.post('/logoutCustomer',customerIsLoggedIn,customerIsLoggedIn,customerController.logoutCustomer);
+router.post('/changePasswordCustomer',customerController.changePassword);
 
 //proximityData
 router.post('/addProximityData',proximityDataController.addData);
 
 //advertisementDetails
-router.post('/addAdvertisementDetails',customerIsLoggedIn,advertiseDataController.addAdvertisementDetails);
+router.post('/addAdvertisementDetails',customerIsLoggedIn,advertiseDataController.pushAdvertisementDetails);
 router.post('/openAdvertisement', customerIsLoggedIn,advertiseDataController.openAdvertisement);
 router.post('/discardAdvertisement',customerIsLoggedIn,advertiseDataController.discardAdvertisement);
 

@@ -7,7 +7,29 @@ let User = models.user();
 var ObjectId = require('mongoose').Types.ObjectId;
 module.exports = () => {
   var result = {};
-  
+result.beacons = async(req, res) => {
+  console.log("Inside beacons");
+  try{
+    const beaconId = req.body.beaconId;
+
+    let beaconData = await Beacon.find({
+        _id: beaconId
+      });
+     if(!beaconData) throw new Error('Error in getting data.');
+    console.log(beaconData)
+    res.json({
+          success: true,
+          data: {name: beaconData.name, place: beaconData.place}//beaconData
+          // {name: beaconData.name}
+        });
+  }catch (err) {
+      return res.json({
+        success: false,
+        message: err.toString()
+      })
+    }
+}
+//****************************************************************************  
 result.beaconList = async(req, res, next) => {
   console.log("Inside beaconList");
   try{
@@ -30,6 +52,7 @@ result.beaconList = async(req, res, next) => {
         let date = new Date();
         let ISOdate = date.toISOString();
 
+      
         let campaignTitle = await Campaign.find({ 
           $and:[{'schedule.startDate':{$lte:ISOdate}},{'schedule.endDate':{$gte:ISOdate}},{beaconId:beaconId}]
           },{campaignTitle:1, _id:0});
@@ -58,7 +81,7 @@ result.beaconList = async(req, res, next) => {
     }
 }
 
-// ***************************************************************************
+//****************************************************************************
 result.newBeacons = async (req, res, next) => {
 
     try {
