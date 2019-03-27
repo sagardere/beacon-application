@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 let models = require('../models/index')();
 let Customer = models.customer();
+var helper = require('../lib/helper')();
 
 module.exports = () => {
   var result = {};
@@ -24,8 +25,9 @@ result.registerCustomer = async(req, res, next)=>{
       if (!req.body || !req.body.firstname) {
         throw new Error('firstname not defined.');
       }
-      if (!req.body || !req.body.dob) {
-        throw new Error('DOB not defined.');
+       if((req.body.dob != "") && (req.body.dob != undefined)){
+          var dob = helper.stringToDate(req.body.dob);
+          //console.log(dob);
       }
       if (!req.body || !req.body.mobile) {
         throw new Error('mobile number not defined.');
@@ -37,27 +39,26 @@ result.registerCustomer = async(req, res, next)=>{
 
       const email = req.body.email;
       const password = req.body.password;
-      const confirmPass = req.body.confirmPass || '';
-      const firstname = req.body.firstname || '';
+      const confirmPass = req.body.confirmPass;
+      const firstname = req.body.firstname;
       const middlename = req.body.middlename || '';
       const lastname = req.body.lastname || '';
-      const dob = req.body.dob || '';
-      const mobile = req.body.mobile || '';
-      const gender = req.body.gender || '';
+      //const dob = req.body.dob;
+      const mobile = req.body.mobile;
+      const gender = req.body.gender;
 
       bcrypt.compare(password, confirmPass).then((response)=>{
       	if(!response){
       		throw new Error('Passwords not matched!');
-      	}
-      	
+      	}  	
       });
 
   
       let customerExist = await Customer.findOne({
-        email: email
+        mobile: mobile
       });
 
-	  if (customerExist) throw new Error('Email allready exists.');
+	  if (customerExist) throw new Error('mobile allready exists.');
       const hashedPassword = passwordHash.generate(password);
       const customer = new Customer({
        username:{
@@ -78,7 +79,7 @@ result.registerCustomer = async(req, res, next)=>{
       if (!newCustomer) throw new Error('Error in Customer Registration...');
       res.json({
           success: true,
-          message: "Customer successfully register..."
+          message: "Customer successfully registered..."
         });
     } catch (err) {
       return res.json({
@@ -92,7 +93,7 @@ result.loginCustomer = async(req, res, next)=>{
 	console.log('Inside loginCustomer');
 	try{
 
-		if (!req.body || !req.body.mobile) {
+		  if (!req.body || !req.body.mobile) {
         throw new Error('Mobile number not defined.');
       }
 
@@ -133,14 +134,14 @@ result.loginCustomer = async(req, res, next)=>{
        if(!updateCustomer) throw new Error('Error in updating customer.');
     res.json({
       success: true,
-      data: {mobile: updateCustomer.mobile, token: updateCustomer.token, id: updateCustomer._id}
+      data: {firstname: updateCustomer.username.firstname, token: updateCustomer.token, id: updateCustomer._id}
     });
       
 
 	}catch (err) {
       return res.json({
         success: false,
-        message: "Invalid userID or password"
+        message: "Invalid mobile no or password"
       })
     }
 }
@@ -174,7 +175,61 @@ result.loginCustomer = async(req, res, next)=>{
       })
     }
 	}
+//**********************************************************************************************
+  result.changePassword = async(req, res, next) => {
+    console.log("Inside changePassword");
+    try{
 
+         if (!req.body || !req.body.mobile) {
+        throw new Error('Email not defined.');
+      }
 
+      if (!req.body || !req.body.newPassword) {
+        throw new Error('newPassword not defined.');
+      }
+
+      if (!req.body || !req.body.confirmPass) {
+        throw new Error('confirmPass not defined.');
+      }
+
+      const mobile = req.body.mobile;
+      const newPassword = req.body.newPassword;
+      const confirmPass = req.body.confirmPass;
+      
+      let customerExist = await Customer.findOne({
+        mobile: mobile
+      });
+      
+      if (!customerExist) 
+        throw new Error('Mobile not register, please signUp.');
+      
+
+      if(newPassword != confirmPass)
+        throw new Error('Passwords not matched..');
+        
+      const hashedPassword = passwordHash.generate(confirmPass);
+        
+      var query = {
+              $set: {password: hashedPassword}
+            };
+      
+      let updateCustomer = await Customer.findOneAndUpdate({
+        mobile:mobile
+      }, query,{new:true});
+
+      if(!updateCustomer) throw new Error('Error in changing password.');
+      res.json({
+      success: true,
+      message: 'Password changed successfully.'
+          });
+
+    }catch (err) {
+      return res.json({
+        success: false,
+        message: "Invalid userID or password"
+      })
+    }
+  }
 	return result;
 }
+//**********************************************************************************************

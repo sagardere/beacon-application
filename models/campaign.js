@@ -38,11 +38,11 @@ var campaign = new mongoose.Schema({
       enum: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
     }]
   },
-  gender: {
+  gender: [{
     type: String,
     enum: ['male','female']
     
-  },
+  }],
   targetAge: {
     minage: {
       type: Number

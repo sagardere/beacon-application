@@ -2,8 +2,14 @@ const mongoose = require('mongoose');
 
 var advertisementData = new mongoose.Schema({
 	
-	CampaignID:{type: mongoose.Schema.Types.ObjectId,
+	campaignId:{type: mongoose.Schema.Types.ObjectId,
 				ref: 'campaign'
+	},
+	advertisementId:{type: mongoose.Schema.Types.ObjectId,
+				ref: 'advertisement'	
+	},
+	customerId:{type: mongoose.Schema.Types.ObjectId,
+				ref: 'customer'
 	},
 	details:[{
 
@@ -11,14 +17,9 @@ var advertisementData = new mongoose.Schema({
 			type: String,	
 			enum: ['pushed', 'opened', 'discarded']
 		},
-		// 	date:{
-		// 	type: Date
-		// },
-		// 	time:{
-		// 	type:Date
-		// }
 		datetime:{
-			type: Date
+			type: Date,
+			default: Date.now()
 		}
 	}]	
 });
