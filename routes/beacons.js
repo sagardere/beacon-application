@@ -19,7 +19,7 @@ result.beacons = async(req, res) => {
     //console.log(beaconData[0].name)
     res.json({
           success: true,
-          data: {name: beaconData[0].name}//beaconData
+          data: {name: beaconData[0].name}
           
         });
   }catch (err) {
