@@ -87,35 +87,43 @@ module.exports = () => {
       
       if((req.body.startDate != "") && (req.body.startDate != undefined)){
           var startDate = helper.stringToDate(req.body.startDate);
-          //console.log(startDate);
       }
 
       if((req.body.endDate != "") && (req.body.endDate != undefined)){
           var endDate = helper.stringToDate(req.body.endDate);
-          //console.log(endDate);
       }
-
-       if((req.body.startTime != "") && (req.body.startTime != undefined)){
-        console.log("in if part")
-       var startTime = new Date(startDate);
-      //console.log(startTime);
+    
+      if((req.body.startTime == "")){
+         var startTime = new Date(startDate);
+       
+  
+      startTime.setHours(0);
+      startTime.setMinutes(0);
+     
+      }
+      
+       else if((req.body.startTime != "") && (req.body.startTime != undefined)){
+        var startTime = new Date(startDate);
       startTime.setHours(parseInt(req.body.startTime));
-      //console.log(startTime)
       }
 
-      if((req.body.endTime != "") && (req.body.endTime != undefined)){
-        console.log("in if part")
+      if((req.body.endTime == "")){
        var endTime = new Date(endDate);
-      //console.log(endTime);
-      endTime.setHours(parseInt(req.body.endTime));
-      //console.log(endTime)
+        
+      startTime.setHours(23);
+      startTime.setMinutes(59);
       }
 
-      let userId = req.body.id || '';
-      let advertisementId = req.body.advertisementId || '';
+      else if((req.body.endTime != "") && (req.body.endTime != undefined)){
+         var endTime = new Date(endDate);
+      endTime.setHours(parseInt(req.body.endTime));
+      }
+
+      let userId = req.body.id;
+      let advertisementId = req.body.advertisementId;
       let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
-      let daysOfWeek = req.body.daysOfWeek || '';
+      let daysOfWeek = req.body.daysOfWeek;
       let gender = req.body.gender || '';
       let minage = req.body.minage || '';
       let maxage = req.body.maxage || ''
@@ -140,7 +148,7 @@ module.exports = () => {
         status: status
       });
       
-      console.log(campaign)
+      //console.log(campaign)
       let newCampaign = await campaign.save();
       if (!newCampaign) throw new Error('Error in campaign saving.');
       res.json({
