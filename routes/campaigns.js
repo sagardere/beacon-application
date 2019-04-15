@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 let models = require('../models/index')();
 let User = models.user();
 let Campaign = models.campaign();
@@ -175,13 +176,20 @@ result.campaignDetails = async(req, res, next)=>{
       
       let campaignData = await Campaign.find({
             _id: campaignId
-          });
-     
-      if(!campaignData) campaignData= '';
+          })
+      //console.log(campaignData);
+      let t1 = moment(campaignData[0]['schedule']['startTime']).format('HH:mm');
+      console.log(t1);
+      let t2 = moment(campaignData[0]['schedule']['endTime']).format('HH:mm');
+      console.log(t2);
+
       res.json({
           success: true,
-          data: campaignData
+          data: {startTime: t1, endTime:t2}//campaignData
         });
+      
+      if(!campaignData) campaignData= '';
+      
 
   }catch (err) {
       return res.json({
@@ -236,7 +244,7 @@ result.updateCampaign = async (req, res, next)=>{
 
       let obj = {
       advertisementId:advertisementId,
-      beaconId:beaconId,
+      beaconId:[],
       campaignTitle:campaignTitle,
       schedule:{
       startTime:startTime,
