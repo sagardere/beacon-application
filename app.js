@@ -9,8 +9,8 @@ const session = require("express-session");
 let index = require('./routes/index');
 const app = express();
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://sagar:sagar123@ds117773.mlab.com:17773/beacon-app',{ useNewUrlParser: true });
-//mongoose.connect('mongodb://localhost/beacon',{ useNewUrlParser: true });
+//mongoose.connect('mongodb://sagar:sagar123@ds117773.mlab.com:17773/beacon-app',{ useNewUrlParser: true });
+mongoose.connect('mongodb://localhost/beacon',{ useNewUrlParser: true });
 var db = mongoose.connection;
 //handle mongodb error
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -70,7 +70,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3001);
 app.listen(app.get('port'), function(){
   console.log('Server started on port : ' + app.get('port'));
 
