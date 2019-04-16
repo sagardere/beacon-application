@@ -70,7 +70,6 @@ module.exports = () => {
     }
   }
 //****************************************************************************************
-  //Post
   result.newCampaigns = async (req, res, next) => {
     console.log("Inside newCampaigns");
      // var startTime;
@@ -88,6 +87,8 @@ module.exports = () => {
       
       if((req.body.startDate != "") && (req.body.startDate != undefined)){
           var startDate = helper.stringToDate(req.body.startDate);
+          // let d1 = moment(startDate).format('l');
+          // console.log(d1)
       }
 
       if((req.body.endDate != "") && (req.body.endDate != undefined)){
@@ -106,6 +107,11 @@ module.exports = () => {
        else if((req.body.startTime != "") && (req.body.startTime != undefined)){
         var startTime = new Date(startDate);
       startTime.setHours(parseInt(req.body.startTime));
+      startTime.setMinutes(parseInt(req.body.startTime));
+      // let t1 = moment(startTime.setHours(parseInt(req.body.startTime))).format('LT');
+      // console.log(t1);
+      // let t2 = moment(startTime.setMinutes(parseInt(req.body.startTime))).format('LT');
+      // console.log(t2);
       }
 
       if((req.body.endTime == "")){
@@ -118,6 +124,11 @@ module.exports = () => {
       else if((req.body.endTime != "") && (req.body.endTime != undefined)){
          var endTime = new Date(endDate);
       endTime.setHours(parseInt(req.body.endTime));
+      endTime.setMinutes(parseInt(req.body.endTime));
+      // let t3 = moment(endTime.setHours(parseInt(req.body.endTime))).format('LT');
+      // console.log(t3);
+      // let t4 = moment(endTime.setMinutes(parseInt(req.body.endTime))).format('LT');
+      // console.log(t4);
       }
 
       let userId = req.body.id;
