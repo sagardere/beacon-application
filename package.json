@@ -19,7 +19,6 @@
     "googleapis": "^38.0.0",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.4.0",
-    "moment": "^2.24.0",
     "mongoose": "^5.4.7",
     "morgan": "~1.9.0",
     "nodemon": "^1.18.9",

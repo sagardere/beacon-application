@@ -10,18 +10,18 @@ var ObjectId = require('mongoose').Types.ObjectId;
 module.exports = () => {
 	var result = {};
 //Post
-result.addAdvertisementDetails = async(req, res, next)=>{
-	console.log('Inside addAdvertisementDetails');
-	try{
+// result.addAdvertisementDetails = async(req, res, next)=>{
+// 	console.log('Inside addAdvertisementDetails');
+// 	try{
 
 
-	}catch (err) {
-      return res.json({
-        success: false,
-        message: "Error in adding Advertisement Details.."
-      })
-    }
-}
+// 	}catch (err) {
+//       return res.json({
+//         success: false,
+//         message: "Error in adding Advertisement Details.."
+//       })
+//     }
+// }
 //****************************************************************************************
 result.openAdvertisement = async(req, res, next)=>{
 	try{

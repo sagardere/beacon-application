@@ -53,7 +53,7 @@ router.post('/changePasswordCustomer',customerController.changePassword);
 router.post('/addProximityData',proximityDataController.addData);
 
 //advertisementDetails
-router.post('/addAdvertisementDetails',customerIsLoggedIn,advertiseDataController.pushAdvertisementDetails);
+//router.post('/addAdvertisementDetails',customerIsLoggedIn,advertiseDataController.pushAdvertisementDetails);
 router.post('/openAdvertisement', customerIsLoggedIn,advertiseDataController.openAdvertisement);
 router.post('/discardAdvertisement',customerIsLoggedIn,advertiseDataController.discardAdvertisement);
 
