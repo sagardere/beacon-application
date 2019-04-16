@@ -189,14 +189,14 @@ result.campaignDetails = async(req, res, next)=>{
             _id: campaignId
           })
       //console.log(campaignData);
-      let t1 = moment(campaignData[0]['schedule']['startTime']).format('HH:mm');
-      console.log(t1);
-      let t2 = moment(campaignData[0]['schedule']['endTime']).format('HH:mm');
-      console.log(t2);
+      // let t1 = moment(campaignData[0]['schedule']['startTime']).format('HH:mm');
+      // console.log(t1);
+      // let t2 = moment(campaignData[0]['schedule']['endTime']).format('HH:mm');
+      // console.log(t2);
 
       res.json({
           success: true,
-          data: {startTime: t1, endTime:t2}//campaignData
+          data: campaignData
         });
       
       if(!campaignData) campaignData= '';
