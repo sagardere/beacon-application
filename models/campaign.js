@@ -5,7 +5,7 @@ var campaign = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
-  beaconId: [{  
+  beaconId: [{
     type: String
     // type: mongoose.Schema.Types.ObjectId,
     // ref: 'beacon'
@@ -40,8 +40,8 @@ var campaign = new mongoose.Schema({
   },
   gender: [{
     type: String,
-    enum: ['male','female','any']
-    
+    enum: ['male','female']
+
   }],
   targetAge: {
     minage: {

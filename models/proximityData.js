@@ -5,8 +5,8 @@ var proximityData = new mongoose.Schema({
 	// beaconID:{type: mongoose.Schema.Types.ObjectId,
 	// 			ref: 'beacon'
 	// },
-	customerId:{type: mongoose.Schema.Types.ObjectId,
-				ref: 'customer'
+	userID:{type: mongoose.Schema.Types.ObjectId,
+				ref: 'user'
 	},
 	beaconID:{
 		type:String

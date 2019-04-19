@@ -1,70 +1,109 @@
 const mongoose = require('mongoose');
 let models = require('../models/index')();
 const async = require('async');
+var helper = require('../lib/helper')();
 let Beacon = models.beacon();
 let Campaign = models.campaign();
 let User = models.user();
 var ObjectId = require('mongoose').Types.ObjectId;
+
 module.exports = () => {
   var result = {};
-result.beacons = async(req, res) => {
-  console.log("Inside beacons");
-  try{
-    const beaconId = req.body.beaconId;
 
-    let beaconData = await Beacon.find({
-        _id: beaconId
+result.getBeacon = async(req, res, next) => {
+  console.log("Inside getBeacon");
+
+    // let campId = "NWFhMjgyYWEzM2U4ODA3Y2MzYTdmNmI4";
+    async.waterfall([(wCb) => {
+
+      (async () => {
+      // let beaconId = "5c6678d63c83320017bd75ab";
+      let beaconsData = await Beacon.find({'_id': beaconId });
+        if(beaconsData && beaconsData.length > 0 && beaconsData[0].name){
+          //wCb(null, toString('beaconsData.name'));
+          let dbBaconName = 'MintGreen';
+          wCb(null, dbBaconName);
+        } else {
+          wCb('Beacon not found by id.');
+        }
+      })();
+    },(dbBaconName ,wCb) => {
+      helper.getBeaconsFromGoogle((beacons) => {
+        if(beacons.success == true){
+          wCb(null, dbBaconName, beacons.data.beacons);
+        } else {
+          wCb(beacons.data)
+        }
       });
-     if(!beaconData) throw new Error('Error in getting data.');
-    //console.log(beaconData[0].name)
-    res.json({
-          success: true,
-          data: {name: beaconData[0].name}
-          
+    },(dbBaconName, googleBeconData, wCb) => {
+      if(googleBeconData.length > 0){
+          for(let i = 0 ; i < googleBeconData.length; i++){
+
+            if(googleBeconData[i].description == dbBaconName){
+              return wCb(null, googleBeconData[i]);
+            }
+          }
+          wCb('Same beacon not found on google dev console.');
+      } else {
+        return wCb('No beacons found on google dev console.')
+      }
+    },(beaconFound, wCb) => {
+      helper.insertBeaconDataOnGoogle(beaconFound.dbBaconName, campId, (insertedBeaconData) => {
+        if(insertedBeaconData.success == true){
+          wCb(null, insertedBeaconData);
+        } else {
+          wCb(insertedBeaconData.data)
+        }
+      });
+    }],(err, result) => {
+      if(err){
+        res.json({
+          'success': false,
+          'err': err.toString()
         });
-  }catch (err) {
-      return res.json({
-        success: false,
-        message: err.toString()
-      })
-    }
+      } else {
+        res.json({
+          'success': true,
+          'data': result
+        });
+      }
+    });
 }
-//****************************************************************************  
+
 result.beaconList = async(req, res, next) => {
   console.log("Inside beaconList");
   try{
       const userId = req.body.id;
       var list = [];
-      
+
       let beaconData = await Beacon.find({
         userId: userId
       });
 
        async.eachSeries(beaconData, async function(beacon, eachCB) {
-        
+
           let obj = {};
           obj.beaconId = beacon._id;
           obj.name = beacon.name;
           obj.place = beacon.place;
 
-          
+
         let beaconId = new ObjectId(beacon._id);
         let date = new Date();
         let ISOdate = date.toISOString();
 
-      
-        let campaignTitle = await Campaign.find({ 
+        let campaignTitle = await Campaign.find({
           $and:[{'schedule.startDate':{$lte:ISOdate}},{'schedule.endDate':{$gte:ISOdate}},{beaconId:beaconId}]
           },{campaignTitle:1, _id:0});
-        
+
         if(!campaignTitle) campaignTitle = '';
 
         obj.campaignTitle = campaignTitle;
-        
+
         list.push(obj);
         //eachCB();
 
-        
+
       }, (err, data) => {
         console.log('Done For All.');
         res.json({
@@ -81,11 +120,11 @@ result.beaconList = async(req, res, next) => {
     }
 }
 
-//****************************************************************************
+// ***************************************************************************
 result.newBeacons = async (req, res, next) => {
 
     try {
-      
+
       // if (!req.body || !req.body.sqrId) {
       //   throw new Error('SqrId not defined...');
       // }
@@ -130,11 +169,11 @@ result.updateBeacons = async (req, res, next) => {
     if (!req.body || !req.body.id) {
         throw new Error('userId not defined.');
       }
-      
+
       if (!req.body || !req.body.beaconId) {
         throw new Error('beaconId not defined.');
       }
-      
+
       // if (!req.body || !req.body.campaignId) {
       //   throw new Error('campaignId not defined.');
       // }
@@ -142,7 +181,7 @@ result.updateBeacons = async (req, res, next) => {
       // if (!req.body || !req.body.campaignTitle) {
       //   throw new Error('campaignTitle not defined.');
       // }
-      
+
       if (!req.body || !req.body.name) {
         throw new Error('name not defined.');
       }
@@ -156,7 +195,7 @@ result.updateBeacons = async (req, res, next) => {
     let campaignTitle = req.body.campaignTitle || '';
     let name = req.body.name || '';
     let place = req.body.place || '';
-    
+
 
     let obj = {
       campaignId:campaignId,
@@ -164,7 +203,7 @@ result.updateBeacons = async (req, res, next) => {
       campaignTitle:campaignTitle,
       name:name,
       place:place
-      
+
     }
 
     let query = {
@@ -189,7 +228,7 @@ result.updateBeacons = async (req, res, next) => {
       })
     }
 }
-  
+
   return result;
 }
 

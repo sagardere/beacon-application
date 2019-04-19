@@ -19,7 +19,7 @@ var customer = new mongoose.Schema({
 		required:true
 	},
 	mobile:{               //LoginID of Customer
-		type:Number,
+		type:String,
 		required:true,
 		unique: true
 	},
@@ -36,6 +36,10 @@ var customer = new mongoose.Schema({
 	password:{
 		type:String,
 		required:true
+	},
+	confirmPass: {
+		type:String
+
 	},
 	token:{
 		type:String

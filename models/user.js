@@ -23,10 +23,18 @@ var user = new mongoose.Schema({
 	},
 	role:{
 		type:String,
-		enum:['admin','superadmin']
+		enum:['admin','superadmin','user']
 	},
 	manager:{
 		type:String
+	},
+	dob:{
+		type:Date,
+		required:true
+	},
+	gender:{
+		type:String,
+		required:true
 	},
 	token:{
 		type:String

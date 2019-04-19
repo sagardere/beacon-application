@@ -1,57 +1,61 @@
 const mongoose = require('mongoose');
-//const moment = require('moment');
 let models = require('../models/index')();
 let User = models.user();
 let Campaign = models.campaign();
 let Advertisement = models.advertisement();
 let Beacon = models.beacon();
-const async = require('async');
+const asyncmodel = require('async');
 var ObjectId = require('mongoose').Types.ObjectId;
 var helper = require('../lib/helper')();
+const path = require('path');
+const fs = require('fs');
+const base64 = require('base-64');
+const utf8 = require('utf8');
+const {
+  google
+} = require('googleapis');
+const TOKEN_PATH = path.join(__dirname, '/../lib/token.json');
+const KEY_PATH = path.join(__dirname, '/../lib/oauth2.keys.json');
+const CODE_PATH = path.join(__dirname, '/../lib/code.json');
 module.exports = () => {
   var result = {};
-  
   result.campaignList = async (req, res) => {
     console.log("Inside campaignsList");
     try {
-      
       const userId = req.body.id;
       var list = [];
-      
       let campaignData = await Campaign.find({
         userId: userId
       });
-      
-
-      async.eachSeries(campaignData, async(campaign, eachCB) =>{
-        
-          let obj = {};
-          obj.campaignId = campaign._id;
-          obj.campaignTitle = campaign.campaignTitle;
-          obj.startDate = campaign.schedule.startDate;
-          obj.endDate = campaign.schedule.endDate;
-          obj.startTime = campaign.schedule.startTime;
-          obj.endTime = campaign.schedule.endTime;
-          obj.daysOfWeek = campaign.schedule.daysOfWeek;
-          
+      asyncmodel.eachSeries(campaignData, async (campaign, eachCB) => {
+        let obj = {};
+        obj.campaignId = campaign._id;
+        obj.campaignTitle = campaign.campaignTitle;
+        obj.startDate = campaign.schedule.startDate;
+        obj.endDate = campaign.schedule.endDate;
+        obj.startTime = campaign.schedule.startTime;
+        obj.endTime = campaign.schedule.endTime;
+        obj.daysOfWeek = campaign.schedule.daysOfWeek;
         let advertisementId = new ObjectId(campaign.advertisementId);
-        
         let beaconId = campaign.beaconId;
-
-       let {advertisementTitle} = await Advertisement.findOne({
-        _id: advertisementId
-        },{advertisementTitle:1, _id: 0});
-       
+        let {
+          advertisementTitle
+        } = await Advertisement.findOne({
+          _id: advertisementId
+        }, {
+          advertisementTitle: 1,
+          _id: 0
+        });
         let name = await Beacon.find({
-        _id: beaconId
-        },{name:1, _id: 0});
-        
-        if(!advertisementTitle) advertisementTitle = '';
-        if(!name) name = '';
-
-        obj.advertisementTitle= advertisementTitle;
+          _id: beaconId
+        }, {
+          name: 1,
+          _id: 0
+        });
+        if (!advertisementTitle) advertisementTitle = '';
+        if (!name) name = '';
+        obj.advertisementTitle = advertisementTitle;
         obj.name = name;
-        
         list.push(obj);
         //eachCB();
       }, (err, data) => {
@@ -69,11 +73,12 @@ module.exports = () => {
       })
     }
   }
-//****************************************************************************************
+  //****************************************************************************************
+  //Post
   result.newCampaigns = async (req, res, next) => {
     console.log("Inside newCampaigns");
-     // var startTime;
-     // var endTime;
+    // var startTime;
+    // var endTime;
     try {
       if (!req.body || !req.body.advertisementId) {
         throw new Error('advertisementId not defined.');
@@ -84,58 +89,33 @@ module.exports = () => {
       if (!req.body || !req.body.campaignTitle) {
         throw new Error('campaignTitle not defined.');
       }
-      
-      if((req.body.startDate != "") && (req.body.startDate != undefined)){
-          var startDate = helper.stringToDate(req.body.startDate);
-          // let d1 = moment(startDate).format('l');
-          // console.log(d1)
+      if ((req.body.startDate != "") && (req.body.startDate != undefined)) {
+        var startDate = helper.stringToDate(req.body.startDate);
+        //console.log(startDate);
       }
-
-      if((req.body.endDate != "") && (req.body.endDate != undefined)){
-          var endDate = helper.stringToDate(req.body.endDate);
+      if ((req.body.endDate != "") && (req.body.endDate != undefined)) {
+        var endDate = helper.stringToDate(req.body.endDate);
+        //console.log(endDate);
       }
-    
-      if((req.body.startTime == "")){
-         var startTime = new Date(startDate);
-       
-  
-      startTime.setHours(0);
-      startTime.setMinutes(0);
-     
-      }
-      
-       else if((req.body.startTime != "") && (req.body.startTime != undefined)){
+      if ((req.body.startTime != "") && (req.body.startTime != undefined)) {
+        console.log("in if part")
         var startTime = new Date(startDate);
-      startTime.setHours(parseInt(req.body.startTime));
-      startTime.setMinutes(parseInt(req.body.startTime));
-      // let t1 = moment(startTime.setHours(parseInt(req.body.startTime))).format('LT');
-      // console.log(t1);
-      // let t2 = moment(startTime.setMinutes(parseInt(req.body.startTime))).format('LT');
-      // console.log(t2);
+        //console.log(startTime);
+        startTime.setHours(parseInt(req.body.startTime));
+        //console.log(startTime)
       }
-
-      if((req.body.endTime == "")){
-       var endTime = new Date(endDate);
-        
-      startTime.setHours(23);
-      startTime.setMinutes(59);
+      if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
+        console.log("in if part")
+        var endTime = new Date(endDate);
+        //console.log(endTime);
+        endTime.setHours(parseInt(req.body.endTime));
+        //console.log(endTime)
       }
-
-      else if((req.body.endTime != "") && (req.body.endTime != undefined)){
-         var endTime = new Date(endDate);
-      endTime.setHours(parseInt(req.body.endTime));
-      endTime.setMinutes(parseInt(req.body.endTime));
-      // let t3 = moment(endTime.setHours(parseInt(req.body.endTime))).format('LT');
-      // console.log(t3);
-      // let t4 = moment(endTime.setMinutes(parseInt(req.body.endTime))).format('LT');
-      // console.log(t4);
-      }
-
-      let userId = req.body.id;
-      let advertisementId = req.body.advertisementId;
+      let userId = req.body.id || '';
+      let advertisementId = req.body.advertisementId || '';
       let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
-      let daysOfWeek = req.body.daysOfWeek;
+      let daysOfWeek = req.body.daysOfWeek || '';
       let gender = req.body.gender || '';
       let minage = req.body.minage || '';
       let maxage = req.body.maxage || ''
@@ -154,13 +134,12 @@ module.exports = () => {
         },
         gender: gender,
         targetAge: {
-          minage:minage,
-          maxage:maxage
+          minage: minage,
+          maxage: maxage
         },
         status: status
       });
-      
-      //console.log(campaign)
+      console.log(campaign)
       let newCampaign = await campaign.save();
       if (!newCampaign) throw new Error('Error in campaign saving.');
       res.json({
@@ -175,74 +154,54 @@ module.exports = () => {
       })
     }
   }
-//***************************************************************************
-result.campaignDetails = async(req, res, next)=>{
-  console.log('Inside campaignDetails');
-  try{
-
-     if (!req.body || !req.body.campaignId) {
+  // ***************************************************************************
+  result.campaignDetails = async (req, res, next) => {
+    console.log('Inside campaignDetails');
+    try {
+      if (!req.body || !req.body.campaignId) {
         throw new Error('campaignId not defined.');
       }
       let campaignId = req.body.campaignId;
-      
       let campaignData = await Campaign.find({
-            _id: campaignId
-          })
-      //console.log(campaignData);
-      // let t1 = moment(campaignData[0]['schedule']['startTime']).format('HH:mm');
-      // console.log(t1);
-      // let t2 = moment(campaignData[0]['schedule']['endTime']).format('HH:mm');
-      // console.log(t2);
-
+        _id: campaignId
+      });
+      if (!campaignData) campaignData = '';
       res.json({
-          success: true,
-          data: campaignData
-        });
-      
-      if(!campaignData) campaignData= '';
-      
-
-  }catch (err) {
+        success: true,
+        data: campaignData
+      });
+    } catch (err) {
       return res.json({
         success: false,
         message: "Error in getting Campaign Details.."
       })
     }
-}
-//****************************************************************************************
-result.updateCampaign = async (req, res, next)=>{
-     console.log('Inside updateCampaign');
-     try{
-
+  }
+  //****************************************************************************************
+  result.updateCampaign = async (req, res, next) => {
+    console.log('Inside updateCampaign');
+    try {
       if (!req.body || !req.body.campaignId) {
         throw new Error('campaignId not defined.');
       }
-      if((req.body.startDate != "") && (req.body.startDate != undefined)){
-          var startDate = helper.stringToDate(req.body.startDate);
-          //console.log(startDate);
+      if ((req.body.startDate != "") && (req.body.startDate != undefined)) {
+        var startDate = helper.stringToDate(req.body.startDate);
       }
-
-      if((req.body.endDate != "") && (req.body.endDate != undefined)){
-          var endDate = helper.stringToDate(req.body.endDate);
-          //console.log(endDate);
+      if ((req.body.endDate != "") && (req.body.endDate != undefined)) {
+        var endDate = helper.stringToDate(req.body.endDate);
       }
-
-       if((req.body.startTime != "") && (req.body.startTime != undefined)){
+      if ((req.body.startTime != "") && (req.body.startTime != undefined)) {
         console.log("in if part")
-       var startTime = new Date(startDate);
-      //console.log(startTime);
-      startTime.setHours(parseInt(req.body.startTime));
-      //console.log(startTime)
+        var startTime = new Date(startDate);
+        startTime.setHours(parseInt(req.body.startTime));
       }
-
-      if((req.body.endTime != "") && (req.body.endTime != undefined)){
+      if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
-       var endTime = new Date(endDate);
-      //console.log(endTime);
-      endTime.setHours(parseInt(req.body.endTime));
-      //console.log(endTime)
-      }
+        var endTime = new Date(endDate);
 
+        endTime.setHours(parseInt(req.body.endTime));
+
+      }
       let campaignId = req.body.campaignId;
       let advertisementId = req.body.advertisementId || '';
       let beaconId = req.body.beaconId || '';
@@ -252,82 +211,38 @@ result.updateCampaign = async (req, res, next)=>{
       let minage = req.body.minage || '';
       let maxage = req.body.maxage || '';
       let status = req.body.status || '';
-
       let obj = {
-      advertisementId:advertisementId,
-      beaconId:[],
-      campaignTitle:campaignTitle,
-      schedule:{
-      startTime:startTime,
-      endTime:endTime,
-      startDate:startDate,
-      endDate:endDate,
-      daysOfWeek:daysOfWeek
-    },
-      gender:gender,
-      targetAge:{
-      minage:minage,
-      maxage:maxage
-    },
-      status:status
-
-    }
-    //console.log(obj);
-    let query = {
-      $set: obj
-    }
-
-    let updateCampaign = await Campaign.findOneAndUpdate({
-                    _id : campaignId
-                  },query,{new: true});
-    //console.log(updateCampaign);
-    
-        if (!updateCampaign) throw new Error('Error in updating campaign..');
-        res.json({
-          success:true,
-          message:'Campaign updated...',
-          data:updateCampaign
-         });
-
-     }catch (err) {
-      return res.json({
-        success: false,
-        message: err.toString()
-      })
-    }
-}
-//****************************************************************************************
-  result.assignBeacon = async (req, res, next) => {
-    console.log('Inside assignBeacon');
-    try {
-      if (!req.body || !req.body.campaignId) {
-        throw new Error('campaignId not defined...');
+        advertisementId: advertisementId,
+        beaconId: beaconId,
+        campaignTitle: campaignTitle,
+        schedule: {
+          startTime: startTime,
+          endTime: endTime,
+          startDate: startDate,
+          endDate: endDate,
+          daysOfWeek: daysOfWeek
+        },
+        gender: gender,
+        targetAge: {
+          minage: minage,
+          maxage: maxage
+        },
+        status: status
       }
-      if (!req.body || !req.body.beaconId) {
-        throw new Error('beaconId not defined...');
-      }
-      let campaignId = req.body.campaignId;
-      let beaconId = req.body.beaconId;
-
-      let obj ={
-        "beaconId":beaconId
-      }
-
       let query = {
-      $push: obj    
+        $set: obj
       }
-
       let updateCampaign = await Campaign.findOneAndUpdate({
-                    "_id" : campaignId
-                  },query,{new: true});
-      console.log(updateCampaign);
-        if (!updateCampaign) throw new Error('Error in updating campaign...');
-        res.json({
-          success:true,
-          message:'Beacon assigned...',
-          data:{beaconId:updateCampaign.beaconId}
-         });
-
+        _id: campaignId
+      }, query, {
+        new: true
+      });
+      if (!updateCampaign) throw new Error('Error in updating campaign..');
+      res.json({
+        success: true,
+        message: 'Campaign updated...',
+        data: updateCampaign
+      });
     } catch (err) {
       return res.json({
         success: false,
@@ -335,5 +250,143 @@ result.updateCampaign = async (req, res, next)=>{
       })
     }
   }
+
+  result.assignBeacon = async (req, res, next) => {
+    console.log('Inside assignBeacon');
+    if (!req.body || !req.body.campaignId) {
+        throw new Error('campaignId not defined...');
+      }
+      if (!req.body || !req.body.beaconId) {
+        throw new Error('beaconId not defined...');
+      }
+    const campaignId = req.body.campaignId;
+    const beaconId = req.body.beaconId;
+
+    var bytes = utf8.encode(campaignId);
+    var base64campaignId = base64.encode(bytes);
+    asyncmodel.waterfall([(wCb) => {
+      (async () => {
+        let beaconId = "5c6678d63c83320017bd75ab";
+        let beaconsData = await Beacon.find({
+          '_id': beaconId
+        });
+        if (beaconsData && beaconsData.length > 0 && beaconsData[0].name) {
+          console.log('first waterfall ', beaconsData[0].name);
+          wCb(null, beaconsData[0].name);
+          //wCb(null, dbBaconName);
+        } else {
+          wCb('Beacon not found by id.');
+        }
+      })();
+    }, (dbBaconName, wCb) => {
+      console.log('Second waterfall');
+      //Read token file
+      fs.readFile(TOKEN_PATH, (err, token) => {
+        if (err) {
+          //get the token
+          console.log("No Token file. Calling authorize");
+          helper.authorize(false, (err, token) => {
+            if (err) {
+              console.log('Error in authorize1....');
+            } else {
+              var jsontoken = JSON.parse(token);
+              console.log('refresh token at first time login :',jsontoken['refresh_token']);
+              fs.readFile(KEY_PATH,(err,data) => {
+                if(err) console.log('Error in reading key file...');
+                else {
+                  var latestData = JSON.parse(data);
+                  var newtoken = 'refresh_token';
+                  latestData.web[newtoken] = jsontoken['refresh_token'];
+                  fs.writeFile(KEY_PATH,JSON.stringify(latestData),(err) => {
+                    if(err) console.log('Error in append refresh token...');
+                      console.log('Refresh Token append...');
+                  })
+                }
+              })
+              helper.getBeaconsFromGoogle(token, function(err, beacons) {
+                if (err) console.log('Error in second waterfall ', err);
+                console.log('beacons : ', beacons);
+                if (beacons.success == true) {
+                  wCb(null, dbBaconName, beacons.data.beacons);
+                } else {
+                  wCb(beacons.data)
+                }
+              });
+            }
+          });
+        } else {
+          //We have the token
+          console.log("Token ", token);
+          helper.getBeaconsFromGoogle(token, function(err, beacons) {
+            console.log('beacons');
+            console.log(beacons);
+            if (err || beacons.statusCode == 401) {
+              console.log('Authentication Error ');
+                helper.refreshToken((err, newToken) => {
+                    if(err){
+                      console.log('Error in getting new token...');
+                      wCb(err);
+                    }else{
+                      console.log('newToken : ',newToken['access_token']);
+                      helper.getBeaconsFromGoogle(JSON.stringify(newToken), function(err, beacons) {
+                            if (err) console.log('Error in getting beacons after refresh token ', err);
+                            console.log('beacons : ', beacons);
+                            if (beacons.success == true) {
+                              wCb(null, dbBaconName, beacons.data.beacons);
+                            } else {
+                              wCb(beacons.data)
+                            }
+                          });
+                      }
+                });
+            }
+             else {
+              console.log('beacons : ', beacons);
+              if (beacons.success == true) {
+                wCb(null, dbBaconName, beacons.data.beacons);
+              } else {
+                wCb(beacons.data)
+              }
+            }
+          });
+        }
+      });
+    }, (dbBaconName, googleBeconData, wCb) => {
+      if (googleBeconData.length > 0) {
+        for (let i = 0; i < googleBeconData.length; i++) {
+          if (googleBeconData[i].description == dbBaconName) {
+            return wCb(null, googleBeconData[i]);
+          }
+        }
+        wCb('Same beacon not found on google dev console.');
+      } else {
+        return wCb('No beacons found on google dev console.')
+      }
+    }, (beaconFound, wCb) => {
+      console.log(beaconFound)
+      helper.insertBeaconDataOnGoogle(beaconFound.beaconName, base64campaignId, (err, insertedBeaconData) => {
+        console.log(" inserted beacon data ");
+        console.log(insertedBeaconData)
+        if (insertedBeaconData.success == true) {
+          wCb(null, insertedBeaconData);
+        } else {
+          wCb(insertedBeaconData.data)
+        }
+      });
+    }], (err, result) => {
+      if (err) {
+        res.json({
+          'success': false,
+          'err': err.toString()
+        });
+      } else {
+        res.json({
+          'success': true,
+          'message':'Beacon assigned....',
+          'data': result
+        });
+      }
+    });
+  }
   return result;
-}//****************************************************************************************
+}

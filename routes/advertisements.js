@@ -9,25 +9,25 @@ async = require('async');
 
 module.exports = () => {
   var result = {};
-  
+
 result.advertisementList = async(req, res, next) => {
   console.log("Inside advertisementList");
   try{
       const userId = req.body.id;
       var list = [];
-      
-      
+
+
       let advertisementData = await Advertisement.find({
         userId: userId
       });
 
         async.eachSeries(advertisementData,async function(advertisement, eachCB) {
-          
+
           let obj = {};
           obj.advertisementId = advertisement._id;
           obj.advertisementTitle = advertisement.advertisementTitle;
-          
-          
+
+
           let advertisementId = new ObjectId(advertisement._id);
 
           let campaignTitle = await Campaign.find({
@@ -37,11 +37,11 @@ result.advertisementList = async(req, res, next) => {
         if(!campaignTitle) campaignTitle= '';
 
         obj.campaignTitle = campaignTitle;
-        
+
         list.push(obj);
         //eachCB();
 
-        
+
       }, (err, data) => {
         console.log('Done For All.');
         res.json({
@@ -65,7 +65,7 @@ result.advertisementList = async(req, res, next) => {
       if (!req.body || !req.body.advertisementTitle) {
         throw new Error('advertisementTitle not defined.');
       }
-      
+
       if (!req.body || !req.body.advertisementContents) {
         throw new Error('advertisementContents not defined.');
       }
@@ -73,7 +73,7 @@ result.advertisementList = async(req, res, next) => {
       // if (!req.body || !req.body.image) {
       //   throw new Error('image not defined.');
       // }
-      
+
       // if (!req.body || !req.body.action) {
       //   throw new Error('action not defined.');
       // }
@@ -95,7 +95,7 @@ result.advertisementList = async(req, res, next) => {
       advertisementContents:advertisementContents,
       image:image,
       action:action,
-      actionTarget:actionTarget     
+      actionTarget:actionTarget
     });
     let newadvertisement = await advertisement.save();
       if (!newadvertisement) throw new Error('Error in advertisement saving.');
@@ -122,11 +122,11 @@ result.advertisementDetails = async(req, res, next)=>{
         throw new Error('advertisementId not defined.');
       }
       let advertisementId = req.body.advertisementId || '';
-      
+
       let advertisementData = await Advertisement.find({
             _id: advertisementId
           });
-     
+
       if(!advertisementData) advertisementData= '';
       res.json({
           success: true,
@@ -146,7 +146,7 @@ result.updateAdvertisement = async (req, res, next) => {
     if (!req.body || !req.body.advertisementTitle) {
         throw new Error('advertisementTitle not defined.');
       }
-      
+
       if (!req.body || !req.body.advertisementContents) {
         throw new Error('advertisementContents not defined.');
       }
@@ -154,7 +154,7 @@ result.updateAdvertisement = async (req, res, next) => {
       // if (!req.body || !req.body.image) {
       //   throw new Error('image not defined.');
       // }
-      
+
       // if (!req.body || !req.body.action) {
       //   throw new Error('action not defined.');
       // }
@@ -187,7 +187,7 @@ result.updateAdvertisement = async (req, res, next) => {
     let updateAdv = await Advertisement.findOneAndUpdate({
                     _id : advertisementId
                   },query,{new: true});
-    
+
         if (!updateAdv) throw new Error('Error in updating advertisement...');
         res.json({
           success:true,
