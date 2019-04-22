@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 let models = require('../models/index')();
 let Customer = models.customer();
+var helper = require('../lib/helper')();
 
 module.exports = () => {
   var result = {};
