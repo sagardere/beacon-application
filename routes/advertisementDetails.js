@@ -43,6 +43,7 @@ module.exports = () => {
           Campaign.find({
             "_id": campaignId
           }).exec((err, data) => {
+
             if (err) {
               callback(err);
             }
@@ -58,7 +59,7 @@ module.exports = () => {
             var todayInt = date.getDay();
             var todayStr = daysArray[todayInt];
             var day = data[0]['schedule']['daysOfWeek'].indexOf(todayStr);
-            console.log(day);
+            //console.log(day);
             if (day == -1) {
               res.json({
                 success: false,
@@ -68,9 +69,10 @@ module.exports = () => {
             } else if (((data[0]['targetAge']['minage'] <= presentAge) && (data[0]['targetAge']['maxage'] >= presentAge)) || ((data[0]['targetAge']['minage'] == null) && (data[0]['targetAge']['maxage'] == null))) {
               if ((ISOstartDate <= ISOdate) && (ISOendDate >= ISOdate)) {
                 if ((ISOstartTime <= ISOdate) && (ISOendTime >= ISOdate)) {
-                  //console.log(data[0]['gender'].includes(gender));
+                  // console.log(data[0]['gender']);
+                  // console.log(data[0]['gender'].indexOf(gender))
 
-                  if (data[0]['gender'].includes(gender)) {
+                  if (data[0]['gender'].indexOf(gender) != -1) {
                     let advertisementId = data[0]['advertisementId'];
                     callback(null, advertisementId);
                   } else {
