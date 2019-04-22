@@ -28,11 +28,11 @@ var customer = new mongoose.Schema({
 		required:true,
 		unique: true
 	},
-	gender:{
+	gender:[{
 		type:String,
 		enum:['male','female'],
 		required:true
-	},
+	}],
 	password:{
 		type:String,
 		required:true
