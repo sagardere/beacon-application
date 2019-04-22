@@ -56,10 +56,10 @@ result.registerCustomer = async(req, res, next)=>{
 
 
       let customerExist = await Customer.findOne({
-        email: email
+        mobile: mobile
       });
 
-	  if (customerExist) throw new Error('Email allready exists.');
+	  if (customerExist) throw new Error('Customer allready exists.');
       const hashedPassword = passwordHash.generate(password);
       const customer = new Customer({
        username:{
