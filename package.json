@@ -8,7 +8,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "base-64": "^0.1.0",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^3.0.3",
     "bcrypt-nodejs": "0.0.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
@@ -16,7 +16,9 @@
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-session": "^1.15.6",
+    "fs": "0.0.1-security",
     "googleapis": "^38.0.0",
+    "http": "0.0.0",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.4.7",
@@ -24,9 +26,12 @@
     "nodemon": "^1.18.9",
     "opn": "^6.0.0",
     "password-hash": "^1.2.2",
+    "path": "^0.12.7",
     "pug": "2.0.0-beta11",
     "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "server-destroy": "^1.0.1",
+    "url": "^0.11.0",
     "utf8": "^3.0.0"
   }
 }
