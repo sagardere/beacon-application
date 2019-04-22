@@ -24,8 +24,9 @@ result.registerCustomer = async(req, res, next)=>{
       if (!req.body || !req.body.firstname) {
         throw new Error('firstname not defined.');
       }
-      if (!req.body || !req.body.dob) {
-        throw new Error('DOB not defined.');
+      if((req.body.dob != "") && (req.body.dob != undefined)){
+          var dob = helper.stringToDate(req.body.dob);
+          //console.log(dob);
       }
       if (!req.body || !req.body.mobile) {
         throw new Error('mobile number not defined.');
