@@ -42,7 +42,7 @@ result.registerCustomer = async(req, res, next)=>{
       const firstname = req.body.firstname || '';
       const middlename = req.body.middlename || '';
       const lastname = req.body.lastname || '';
-      const dob = req.body.dob || '';
+      //const dob = req.body.dob || '';
       const mobile = req.body.mobile || '';
       const gender = req.body.gender || '';
 
@@ -180,3 +180,5 @@ result.loginCustomer = async(req, res, next)=>{
 
 	return result;
 }
+//**********************************************************************************************
+
