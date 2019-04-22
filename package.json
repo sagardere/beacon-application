@@ -22,8 +22,11 @@
     "mongoose": "^5.4.7",
     "morgan": "~1.9.0",
     "nodemon": "^1.18.9",
+    "opn": "^6.0.0",
     "password-hash": "^1.2.2",
     "pug": "2.0.0-beta11",
+    "request": "^2.88.0",
+    "server-destroy": "^1.0.1",
     "utf8": "^3.0.0"
   }
 }
