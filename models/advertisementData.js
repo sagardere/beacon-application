@@ -18,7 +18,8 @@ var advertisementData = new mongoose.Schema({
 		// 	type:Date
 		// }
 		datetime:{
-			type: Date
+			type: Date,
+			default: Date.now()
 		}
 	}]	
 });

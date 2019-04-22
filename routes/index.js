@@ -20,7 +20,7 @@ router.post('/registration', userController.register);
 router.post('/login', userController.login);
 router.post('/logout', isLoggedIn, userController.logout);
 //beacon
-router.get('/getBeacon', beaconController.getBeacon);
+//router.get('/getBeacon', beaconController.getBeacon);
 //We will add beacons directly to DB
 //router.post('/create_beacon', beaconController.newBeacons);
 router.post('/update_beacon', isLoggedIn, beaconController.updateBeacons);
