@@ -260,15 +260,14 @@ module.exports = () => {
         throw new Error('beaconId not defined...');
       }
     const campaignId = req.body.campaignId;
-    const beaconId = req.body.beaconId;
+    //const beaconId = req.body.beaconId;
 
     var bytes = utf8.encode(campaignId);
     var base64campaignId = base64.encode(bytes);
     asyncmodel.waterfall([(wCb) => {
       (async () => {
-        let beaconId = "5c6678d63c83320017bd75ab";
         let beaconsData = await Beacon.find({
-          '_id': beaconId
+          '_id': req.body.beaconId
         });
         if (beaconsData && beaconsData.length > 0 && beaconsData[0].name) {
           console.log('first waterfall ', beaconsData[0].name);
@@ -380,11 +379,27 @@ module.exports = () => {
           'err': err.toString()
         });
       } else {
+        var d = base64.decode(result.data['data']);
+        let obj ={
+        "beaconId":req.body.beaconId
+      }
+      let query = {
+      $push: obj
+      }
+      Campaign.findOneAndUpdate({
+                    "_id" : campaignId
+                  },query,{new: true},(err,updatedData) => {
+                    if(err) return next(err);
+                     console.log(updatedData);
+                  });
+
+        //if (!updateCampaign) throw new Error('Error in updating campaign...');
         res.json({
           'success': true,
           'message':'Beacon assigned....',
           'data': result
-        });
+          });
+
       }
     });
   }
