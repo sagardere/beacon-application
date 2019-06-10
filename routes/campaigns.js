@@ -389,7 +389,7 @@ module.exports = () => {
         res.json({
           'success': true,
           'message': 'Beacon assigned....',
-          'data': result
+          'data': updatedData
         });
       }
     });

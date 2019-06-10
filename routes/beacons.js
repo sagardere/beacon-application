@@ -75,19 +75,15 @@ result.beaconList = async(req, res, next) => {
   try{
       const userId = req.body.id;
       var list = [];
-
       let beaconData = await Beacon.find({
         userId: userId
       });
-
        async.eachSeries(beaconData, async function(beacon, eachCB) {
-
           let obj = {};
           obj.beaconId = beacon._id;
           obj.name = beacon.name;
           obj.place = beacon.place;
-
-
+          
         let beaconId = new ObjectId(beacon._id);
         let date = new Date();
         let ISOdate = date.toISOString();
