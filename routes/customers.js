@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 let models = require('../models/index')();
 let Customer = models.customer();
-var helper = require('../lib/helper')();
 
 module.exports = () => {
   var result = {};
@@ -25,9 +24,8 @@ result.registerCustomer = async(req, res, next)=>{
       if (!req.body || !req.body.firstname) {
         throw new Error('firstname not defined.');
       }
-      if((req.body.dob != "") && (req.body.dob != undefined)){
-          var dob = helper.stringToDate(req.body.dob);
-          //console.log(dob);
+      if (!req.body || !req.body.dob) {
+        throw new Error('DOB not defined.');
       }
       if (!req.body || !req.body.mobile) {
         throw new Error('mobile number not defined.');
@@ -43,7 +41,7 @@ result.registerCustomer = async(req, res, next)=>{
       const firstname = req.body.firstname || '';
       const middlename = req.body.middlename || '';
       const lastname = req.body.lastname || '';
-      //const dob = req.body.dob || '';
+      const dob = req.body.dob || '';
       const mobile = req.body.mobile || '';
       const gender = req.body.gender || '';
 
@@ -51,15 +49,11 @@ result.registerCustomer = async(req, res, next)=>{
       	if(!response){
       		throw new Error('Passwords not matched!');
       	}
-
       });
-
-
       let customerExist = await Customer.findOne({
-        mobile: mobile
+        email: email
       });
-
-	  if (customerExist) throw new Error('Customer allready exists.');
+	  if (customerExist) throw new Error('Email allready exists.');
       const hashedPassword = passwordHash.generate(password);
       const customer = new Customer({
        username:{
@@ -89,7 +83,7 @@ result.registerCustomer = async(req, res, next)=>{
       })
     }
 }
-//**********************************************************************************************
+//*******************************************************************************************
 result.loginCustomer = async(req, res, next)=>{
 	console.log('Inside loginCustomer');
 	try{
@@ -138,8 +132,6 @@ result.loginCustomer = async(req, res, next)=>{
       success: true,
       data: {mobile: updateCustomer.mobile, token: updateCustomer.token, id: updateCustomer._id}
     });
-
-
 	}catch (err) {
       return res.json({
         success: false,
@@ -147,7 +139,7 @@ result.loginCustomer = async(req, res, next)=>{
       })
     }
 }
-//**********************************************************************************************
+//*******************************************************************************************
 	result.logoutCustomer = async(req, res, next)=>{
 		console.log('Inside logoutCustomer...');
 	try{
@@ -181,5 +173,3 @@ result.loginCustomer = async(req, res, next)=>{
 
 	return result;
 }
-//**********************************************************************************************
-

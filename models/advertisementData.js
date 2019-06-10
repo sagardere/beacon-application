@@ -1,27 +1,22 @@
 const mongoose = require('mongoose');
 
 var advertisementData = new mongoose.Schema({
-	
-	CampaignID:{type: mongoose.Schema.Types.ObjectId,
+
+	campaignId:{type: mongoose.Schema.Types.ObjectId,
 				ref: 'campaign'
 	},
+	customerId:{type: mongoose.Schema.Types.ObjectId,
+				ref: 'customer'},
 	details:[{
 
 			status:{
-			type: String,	
+			type: String,
 			enum: ['pushed', 'opened', 'discarded']
 		},
-		// 	date:{
-		// 	type: Date
-		// },
-		// 	time:{
-		// 	type:Date
-		// }
 		datetime:{
-			type: Date,
-			default: Date.now()
+			type: Date
 		}
-	}]	
+	}]
 });
 
 module.exports = advertisementData;

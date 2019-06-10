@@ -9,7 +9,7 @@ const _ = require('lodash');
 var helper = require('../lib/helper')();
 module.exports = () => {
   var result = {};
-//Post
+
   result.pushAdvertisementDetails = async (req, res, next) => {
     console.log('Inside pushAdvertisementDetails');
     try {
@@ -18,7 +18,6 @@ module.exports = () => {
         throw new Error('campaignId not defined.');
       }
       let campaignId = req.body.campaignId;
-
       var customerId = req.body.id;
       let date = new Date();
       console.log("date:" + date);
@@ -32,8 +31,8 @@ module.exports = () => {
             if (err) {
               callback(err);
             }
-            //console.log('Data');
-            //console.log(customerdata);
+            console.log('Data');
+            console.log(customerdata);
             var gender = customerdata[0]['gender'];
             var presentAge = helper.getAge(customerdata[0]['dob']);
             callback(null, presentAge, gender);
@@ -43,10 +42,10 @@ module.exports = () => {
           Campaign.find({
             "_id": campaignId
           }).exec((err, data) => {
-
             if (err) {
               callback(err);
             }
+            console.log("campaign data :",data)
             var startDate = new Date(data[0]['schedule']['startDate']);
             var ISOstartDate = startDate.toISOString();
             var endDate = new Date(data[0]['schedule']['endDate']);
@@ -59,20 +58,19 @@ module.exports = () => {
             var todayInt = date.getDay();
             var todayStr = daysArray[todayInt];
             var day = data[0]['schedule']['daysOfWeek'].indexOf(todayStr);
-            //console.log(day);
-            if (day == -1) {
+
+
+            console.log(day);
+            if (day == -1 && data[0]['schedule']['daysOfWeek'].indexOf("ALL") == -1) {
               res.json({
                 success: false,
                 message: "No campaign for today"
               });
               return next(err);
-            } else if (((data[0]['targetAge']['minage'] <= presentAge) && (data[0]['targetAge']['maxage'] >= presentAge)) || ((data[0]['targetAge']['minage'] == null) && (data[0]['targetAge']['maxage'] == null))) {
+            } else if (((data[0]['targetAge']['minage'] <= presentAge) && (data[0]['targetAge']['maxage'] >= presentAge)) ) {
               if ((ISOstartDate <= ISOdate) && (ISOendDate >= ISOdate)) {
                 if ((ISOstartTime <= ISOdate) && (ISOendTime >= ISOdate)) {
-                  // console.log(data[0]['gender']);
-                  // console.log(data[0]['gender'].indexOf(gender))
-
-                  if (data[0]['gender'].indexOf(gender) != -1) {
+                  if (data[0]['gender'].includes(gender) ) {
                     let advertisementId = data[0]['advertisementId'];
                     callback(null, advertisementId);
                   } else {
@@ -80,28 +78,24 @@ module.exports = () => {
                       success: false,
                       message: "gender not matched"
                     });
-                    return false;
                   }
                 } else {
                   res.json({
                     success: false,
                     message: "time not matched"
                   });
-                  return false;
                 }
               } else {
                 res.json({
                   success: false,
                   message: "date not matched"
                 });
-                return false;
               }
             } else {
               res.json({
                 success: false,
                 message: "age not matched"
               });
-              return next(err);
             }
           });
         }, (advertisementId, callback) => {
@@ -114,24 +108,27 @@ module.exports = () => {
               callback(err);
             }
             var advertisementData = data;
+            console.log("advertisementData :",advertisementData)
             callback(null, advertisementData);
           });
         },
         async (advertisementData, callback) => {
           console.log("4th function");
           let advData = new AdvertisementData({
-            campaignId: campaignId,
+            CampaignID: campaignId,
             customerId: customerId,
-            details: {
+            details: [{
               status: 'pushed'
-            }
+            },{
+              datetime:date
+            }]
           });
           let newadvData = await advData.save();
           console.log(newadvData);
           if (!newadvData) throw new Error('Error in saving advertisement data.');
           res.json({
             success: true,
-            data: advertisementData
+            data: {notification:advertisementData,campaignId:campaignId,customerId:customerId}
           });
         }
       ], (err, result) => {
@@ -146,92 +143,70 @@ module.exports = () => {
       })
     }
   }
-//****************************************************************************************
-result.openAdvertisement = async(req, res, next)=>{
-  try{
-
-      if (!req.body || !req.body.advertisementId) {
-        throw new Error('advertisementId not defined.');
-      }
-
+  result.openAdvertisement = async (req, res, next) => {
+    try {
+      console.log('within openAdvertisement...')
       if (!req.body || !req.body.campaignId) {
         throw new Error('campaignId not defined.');
       }
-
-      
-      let advertisementId = req.body.advertisementId || '';
-      let campaignId = req.body.campaignId || '';
-
-      const openAdd = new AdvertisementData({
-        customerId:id,
-        advertisementId:advertisementId,
-        campaignId:campaignId,
-        details:[{
-        status:'opened'
-      }]
-      });
-      
-      console.log(openAdd);
-
+      if (!req.body || !req.body.customerId) {
+        throw new Error('customerId not defined.');
+      }
+      var today = new Date();
+      let openAdd = new AdvertisementData({
+            campaignId: req.body.campaignId,
+            customerId: req.body.customerId,
+            details: [{
+              status: 'opened',
+              datetime:today
+            }]
+          });
       //save Advertisement data in dbs
       let newAddOpen = await openAdd.save();
-
       if (!newAddOpen) throw new Error('Error in data adding...');
       res.json({
-          success: true,
-          message: "Advertisement data successfully added..."
-          
-        });
-  }catch (err) {
+        success: true,
+        message: "Advertisement data successfully added..."
+        //data: openAdd
+      });
+    } catch (err) {
       return res.json({
         success: false,
-        message: "Error in adding data.."
+        message: err.toString()
       })
     }
-
-}
-
-//**************************************************************************************
-result.discardAdvertisement = async(req, res, next)=>{
-  try{
-
-      if (!req.body || !req.body.advertisementId) {
-        throw new Error('advertisementId not defined.');
-      }
-
-      if (!req.body || !req.body.campaignId) {
+  }
+  //**************************************************************************************
+  result.discardAdvertisement = async (req, res, next) => {
+    try {
+       if (!req.body || !req.body.campaignId) {
         throw new Error('campaignId not defined.');
       }
-
-      
-      let advertisementId = req.body.advertisementId || '';
-      let campaignId = req.body.campaignId || '';
-
-      const discardAdd = new AdvertisementData({
-        customerId:id,
-        advertisementId:advertisementId,
-        campaignId:campaignId,
-        details:{
-        status:'discarded'
+      if (!req.body || !req.body.customerId) {
+        throw new Error('customerId not defined.');
       }
-      });
-
-      console.log(discardAdd);
+      var today = new Date();
+      let discardAdd = new AdvertisementData({
+            CampaignID: campaignId,
+            customerId: customerId,
+            details: [{
+              status: 'discarded',
+              datetime:today
+            }]
+          });
       //save Advertisement data in dbs
       let newAddDiscard = await discardAdd.save();
       if (!newAddDiscard) throw new Error('Error in data adding...');
       res.json({
-          success: true,
-          message: "Advertisement data successfully added..."
-        });
-  }catch (err) {
+        success: true,
+        message: "Advertisement data successfully added..."
+      });
+    } catch (err) {
       return res.json({
         success: false,
         message: "Error in adding data.."
       })
     }
-
-}
+  }
   return result;
 }
-//**************************************************************************************

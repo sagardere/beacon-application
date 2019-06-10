@@ -11,9 +11,9 @@ result.addData = async(req, res, next) =>{
 
 	try{
 
-      // if (!req.body || !req.body.userID) {
-      //   throw new Error('userID not defined.');
-      // }
+      if (!req.body || !req.body.userID) {
+        throw new Error('userID not defined.');
+      }
 		  if (!req.body || !req.body.beaconID) {
         throw new Error('beaconID not defined.');
       }
@@ -27,15 +27,15 @@ result.addData = async(req, res, next) =>{
         throw new Error('endTime not defined.');
       }
 
-      const userID = req.body.id || ''
+      const userID = req.body.userID || ''
       const beaconID = req.body.beaconID || '';
       const date = req.body.date || '';
       const startTime = req.body.startTime || '';
       const endTime = req.body.endTime || '';
-      
+
 
       const proximityData = new ProximityData({
-        userID:id,
+        userID:userID,
       	beaconID:beaconID,
       	date:date,
       	startTime:startTime,

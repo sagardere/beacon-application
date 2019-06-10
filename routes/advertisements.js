@@ -177,7 +177,6 @@ result.updateAdvertisement = async (req, res, next) => {
       image:image,
       action:action,
       actionTarget:actionTarget
-
     }
 
     let query = {
@@ -194,7 +193,6 @@ result.updateAdvertisement = async (req, res, next) => {
           message:'Advertisement updated...',
           data:updateAdv
          });
-
   }catch (err) {
       return res.json({
         success: false,

@@ -19,30 +19,36 @@ router.get('/', function(req, res) {
 router.post('/registration', userController.register);
 router.post('/login', userController.login);
 router.post('/logout', isLoggedIn, userController.logout);
+
 //beacon
-//router.get('/getBeacon', beaconController.getBeacon);
+router.get('/getBeacon', beaconController.getBeacon);
 //We will add beacons directly to DB
 //router.post('/create_beacon', beaconController.newBeacons);
 router.post('/update_beacon', isLoggedIn, beaconController.updateBeacons);
 //We need this
 router.post('/beaconsList', isLoggedIn, beaconController.beaconList);
+
 //advertisement
 router.post('/create_advertisement', isLoggedIn, advertiseController.newAdvertisements);
 router.post('/advertisementDetails', isLoggedIn, advertiseController.advertisementDetails);
 router.post('/update_advertisement', isLoggedIn, advertiseController.updateAdvertisement);
 router.post('/advertisementsList', isLoggedIn, advertiseController.advertisementList);
+
 //campaigns
 router.post('/create_campaign', isLoggedIn, campaignController.newCampaigns);
 router.post('/campaignDetails', isLoggedIn, campaignController.campaignDetails);
 router.post('/update_campaign', isLoggedIn, campaignController.updateCampaign);
 router.post('/assignBeacon', isLoggedIn, campaignController.assignBeacon);
 router.post('/campaignsList', isLoggedIn, campaignController.campaignList);
+
 //customer
 router.post('/registerCustomer', customerController.registerCustomer);
 router.post('/loginCustomer', customerController.loginCustomer);
 router.post('/logoutCustomer', customerIsLoggedIn, customerController.logoutCustomer);
+
 //proximityData
 router.post('/addProximityData', proximityDataController.addData);
+
 //advertisementDetails
 router.post('/pushAdvertisementDetails', customerIsLoggedIn, advertiseDataController.pushAdvertisementDetails);
 router.post('/openAdvertisement', customerIsLoggedIn, advertiseDataController.openAdvertisement);

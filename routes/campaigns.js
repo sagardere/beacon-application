@@ -83,42 +83,39 @@ module.exports = () => {
       if (!req.body || !req.body.advertisementId) {
         throw new Error('advertisementId not defined.');
       }
-      // if (!req.body || !req.body.beaconId) {
-      //   throw new Error('beaconId not defined.');
-      // }
       if (!req.body || !req.body.campaignTitle) {
         throw new Error('campaignTitle not defined.');
       }
+      if (!req.body || !req.body.startDate) {
+        throw new Error('startDate not defined.');
+      }
       if ((req.body.startDate != "") && (req.body.startDate != undefined)) {
         var startDate = helper.stringToDate(req.body.startDate);
-        //console.log(startDate);
+      }
+      if (!req.body || !req.body.endDate) {
+        throw new Error('endDate not defined.');
       }
       if ((req.body.endDate != "") && (req.body.endDate != undefined)) {
         var endDate = helper.stringToDate(req.body.endDate);
-        //console.log(endDate);
       }
       if ((req.body.startTime != "") && (req.body.startTime != undefined)) {
         console.log("in if part")
         var startTime = new Date(startDate);
-        //console.log(startTime);
         startTime.setHours(parseInt(req.body.startTime));
-        //console.log(startTime)
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
-        //console.log(endTime);
         endTime.setHours(parseInt(req.body.endTime));
-        //console.log(endTime)
       }
       let userId = req.body.id || '';
       let advertisementId = req.body.advertisementId || '';
       let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
-      let daysOfWeek = req.body.daysOfWeek || '';
+      let daysOfWeek = req.body.daysOfWeek || 'ALL';
       let gender = req.body.gender || '';
-      let minage = req.body.minage || '';
-      let maxage = req.body.maxage || ''
+      let minage = req.body.minage || '-1';
+      let maxage = req.body.maxage || '100';
       let status = req.body.status || '';
       let campaign = new Campaign({
         userId: userId,
@@ -198,9 +195,7 @@ module.exports = () => {
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
-
         endTime.setHours(parseInt(req.body.endTime));
-
       }
       let campaignId = req.body.campaignId;
       let advertisementId = req.body.advertisementId || '';
@@ -250,18 +245,16 @@ module.exports = () => {
       })
     }
   }
-
   result.assignBeacon = async (req, res, next) => {
     console.log('Inside assignBeacon');
     if (!req.body || !req.body.campaignId) {
-        throw new Error('campaignId not defined...');
-      }
-      if (!req.body || !req.body.beaconId) {
-        throw new Error('beaconId not defined...');
-      }
+      throw new Error('campaignId not defined...');
+    }
+    if (!req.body || !req.body.beaconId) {
+      throw new Error('beaconId not defined...');
+    }
     const campaignId = req.body.campaignId;
     //const beaconId = req.body.beaconId;
-
     var bytes = utf8.encode(campaignId);
     var base64campaignId = base64.encode(bytes);
     asyncmodel.waterfall([(wCb) => {
@@ -272,7 +265,7 @@ module.exports = () => {
         if (beaconsData && beaconsData.length > 0 && beaconsData[0].name) {
           console.log('first waterfall ', beaconsData[0].name);
           wCb(null, beaconsData[0].name);
-          //wCb(null, dbBaconName);
+          //wCb(null, dbBeaconName);
         } else {
           wCb('Beacon not found by id.');
         }
@@ -282,23 +275,23 @@ module.exports = () => {
       //Read token file
       fs.readFile(TOKEN_PATH, (err, token) => {
         if (err) {
-          //get the token
+          //No token
           console.log("No Token file. Calling authorize");
           helper.authorize(false, (err, token) => {
             if (err) {
               console.log('Error in authorize1....');
             } else {
               var jsontoken = JSON.parse(token);
-              console.log('refresh token at first time login :',jsontoken['refresh_token']);
-              fs.readFile(KEY_PATH,(err,data) => {
-                if(err) console.log('Error in reading key file...');
+              console.log('refresh token at first time login :', jsontoken['refresh_token']);
+              fs.readFile(KEY_PATH, (err, data) => {
+                if (err) console.log('Error in reading key file...');
                 else {
                   var latestData = JSON.parse(data);
                   var newtoken = 'refresh_token';
                   latestData.web[newtoken] = jsontoken['refresh_token'];
-                  fs.writeFile(KEY_PATH,JSON.stringify(latestData),(err) => {
-                    if(err) console.log('Error in append refresh token...');
-                      console.log('Refresh Token append...');
+                  fs.writeFile(KEY_PATH, JSON.stringify(latestData), (err) => {
+                    if (err) console.log('Error in append refresh token...');
+                    console.log('Refresh Token append...');
                   })
                 }
               })
@@ -321,25 +314,24 @@ module.exports = () => {
             console.log(beacons);
             if (err || beacons.statusCode == 401) {
               console.log('Authentication Error ');
-                helper.refreshToken((err, newToken) => {
-                    if(err){
-                      console.log('Error in getting new token...');
-                      wCb(err);
-                    }else{
-                      console.log('newToken : ',newToken['access_token']);
-                      helper.getBeaconsFromGoogle(JSON.stringify(newToken), function(err, beacons) {
-                            if (err) console.log('Error in getting beacons after refresh token ', err);
-                            console.log('beacons : ', beacons);
-                            if (beacons.success == true) {
-                              wCb(null, dbBaconName, beacons.data.beacons);
-                            } else {
-                              wCb(beacons.data)
-                            }
-                          });
-                      }
-                });
-            }
-             else {
+              helper.refreshToken((err, newToken) => {
+                if (err) {
+                  console.log('Error in getting new token...');
+                  wCb(err);
+                } else {
+                  console.log('newToken : ', newToken['access_token']);
+                  helper.getBeaconsFromGoogle(JSON.stringify(newToken), function(err, beacons) {
+                    if (err) console.log('Error in getting beacons after refresh token ', err);
+                    console.log('beacons : ', beacons);
+                    if (beacons.success == true) {
+                      wCb(null, dbBaconName, beacons.data.beacons);
+                    } else {
+                      wCb(beacons.data)
+                    }
+                  });
+                }
+              });
+            } else {
               console.log('beacons : ', beacons);
               if (beacons.success == true) {
                 wCb(null, dbBaconName, beacons.data.beacons);
@@ -379,27 +371,26 @@ module.exports = () => {
           'err': err.toString()
         });
       } else {
-        var d = base64.decode(result.data['data']);
-        let obj ={
-        "beaconId":req.body.beaconId
-      }
-      let query = {
-      $push: obj
-      }
-      Campaign.findOneAndUpdate({
-                    "_id" : campaignId
-                  },query,{new: true},(err,updatedData) => {
-                    if(err) return next(err);
-                     console.log(updatedData);
-                  });
-
-        //if (!updateCampaign) throw new Error('Error in updating campaign...');
+       // var d = base64.decode(result.data['data']);
+        let obj = {
+          "beaconId": req.body.beaconId
+        }
+        let query = {
+          $push: obj
+        }
+        Campaign.findOneAndUpdate({
+          "_id": campaignId
+        }, query, {
+          new: true
+        }, (err, updatedData) => {
+          if (err) return next(err);
+          console.log(updatedData);
+        });
         res.json({
           'success': true,
-          'message':'Beacon assigned....',
+          'message': 'Beacon assigned....',
           'data': result
-          });
-
+        });
       }
     });
   }

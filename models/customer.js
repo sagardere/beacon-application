@@ -19,7 +19,7 @@ var customer = new mongoose.Schema({
 		required:true
 	},
 	mobile:{               //LoginID of Customer
-		type:Number,
+		type:String,
 		required:true,
 		unique: true
 	},
@@ -28,11 +28,11 @@ var customer = new mongoose.Schema({
 		required:true,
 		unique: true
 	},
-	gender:[{
+	gender:{
 		type:String,
 		enum:['male','female'],
 		required:true
-	}],
+	},
 	password:{
 		type:String,
 		required:true
