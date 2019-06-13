@@ -38,20 +38,10 @@ module.exports = () => {
         obj.daysOfWeek = campaign.schedule.daysOfWeek;
         let advertisementId = new ObjectId(campaign.advertisementId);
         let beaconId = campaign.beaconId;
-        let {
-          advertisementTitle
-        } = await Advertisement.findOne({
-          _id: advertisementId
-        }, {
-          advertisementTitle: 1,
-          _id: 0
-        });
-        let name = await Beacon.find({
-          _id: beaconId
-        }, {
-          name: 1,
-          _id: 0
-        });
+        let advertisementTitle = await Advertisement.findOne({_id: advertisementId}, 
+          {advertisementTitle: 1,_id: 0});
+        let name = await Beacon.find({_id: beaconId}, 
+          {name: 1,_id: 0});
         if (!advertisementTitle) advertisementTitle = '';
         if (!name) name = '';
         obj.advertisementTitle = advertisementTitle;
@@ -199,7 +189,7 @@ module.exports = () => {
       }
       let campaignId = req.body.campaignId;
       let advertisementId = req.body.advertisementId || '';
-      let beaconId = req.body.beaconId || '';
+      //let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
       let daysOfWeek = req.body.daysOfWeek || '';
       let gender = req.body.gender || '';
@@ -208,7 +198,6 @@ module.exports = () => {
       let status = req.body.status || '';
       let obj = {
         advertisementId: advertisementId,
-        beaconId: beaconId,
         campaignTitle: campaignTitle,
         schedule: {
           startTime: startTime,
@@ -227,11 +216,8 @@ module.exports = () => {
       let query = {
         $set: obj
       }
-      let updateCampaign = await Campaign.findOneAndUpdate({
-        _id: campaignId
-      }, query, {
-        new: true
-      });
+      let updateCampaign = await Campaign.findOneAndUpdate({_id: campaignId},
+       query, {new: true});
       if (!updateCampaign) throw new Error('Error in updating campaign..');
       res.json({
         success: true,
