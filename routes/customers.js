@@ -1,11 +1,10 @@
 const passwordHash = require('password-hash');
 const mongoose = require('mongoose');
 const async = require('async');
-//const bcrypt = require('bcrypt');
+const bcryptmodule = require('bcrypt');
 const jwt = require('jsonwebtoken');
 let models = require('../models/index')();
 let Customer = models.customer();
-
 module.exports = () => {
   var result = {};
 //Post
@@ -45,7 +44,7 @@ result.registerCustomer = async(req, res, next)=>{
       const mobile = req.body.mobile || '';
       const gender = req.body.gender || '';
 
-      bcrypt.compare(password, confirmPass).then((response)=>{
+      bcryptmodule.compare(password, confirmPass).then((response)=>{
       	if(!response){
       		throw new Error('Passwords not matched!');
       	}
