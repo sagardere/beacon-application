@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const async = require('async');
 const bcryptmodule = require('bcrypt');
 const jwt = require('jsonwebtoken');
+var helper = require('../lib/helper')();
 let models = require('../models/index')();
 let Customer = models.customer();
 module.exports = () => {
@@ -26,21 +27,23 @@ result.registerCustomer = async(req, res, next)=>{
       if (!req.body || !req.body.dob) {
         throw new Error('DOB not defined.');
       }
+      if((req.body.dob != "") && (req.body.dob != undefined)){
+          var dateofbirth = helper.stringToDate(req.body.dob);
+          console.log("dateofbirth", dateofbirth);
+      }
       if (!req.body || !req.body.mobile) {
         throw new Error('mobile number not defined.');
       }
       if (!req.body || !req.body.gender) {
         throw new Error('Gender not defined.');
       }
-
-
       const email = req.body.email;
       const password = req.body.password;
       const confirmPass = req.body.confirmPass || '';
       const firstname = req.body.firstname || '';
       const middlename = req.body.middlename || '';
       const lastname = req.body.lastname || '';
-      const dob = req.body.dob || '';
+      //const dob = req.body.dob || '';
       const mobile = req.body.mobile || '';
       const gender = req.body.gender || '';
 
@@ -62,10 +65,9 @@ result.registerCustomer = async(req, res, next)=>{
                 },
                 email:email,
                 password: hashedPassword,
-                dob: dob,
+                dob: dateofbirth,
                 mobile: mobile,
                 gender:gender
-
       });
 
       //save Customer information in dbs
@@ -90,11 +92,9 @@ result.loginCustomer = async(req, res, next)=>{
 		if (!req.body || !req.body.mobile) {
         throw new Error('Mobile number not defined.');
       }
-
       if (!req.body || !req.body.password) {
         throw new Error('Password not defined.');
       }
-
       const mobile = req.body.mobile;
       const password = req.body.password;
 
@@ -145,7 +145,6 @@ result.loginCustomer = async(req, res, next)=>{
 
 		Customer.update({_id: req.body.id}, {
       	token: null,
-
     }, function(err, affected, resp) {
 
       if(err){
