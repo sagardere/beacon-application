@@ -178,33 +178,35 @@ module.exports = () => {
   }
   //**************************************************************************************
   result.discardAdvertisement = async (req, res, next) => {
-    try {
-       if (!req.body || !req.body.campaignId) {
+     try {
+      console.log('within openAdvertisement...')
+      if (!req.body || !req.body.campaignId) {
         throw new Error('campaignId not defined.');
       }
       if (!req.body || !req.body.customerId) {
         throw new Error('customerId not defined.');
       }
       var today = new Date();
-      let discardAdd = new AdvertisementData({
-            campaignId: campaignId,
-            customerId: customerId,
+      let openAdd = new AdvertisementData({
+            campaignId: req.body.campaignId,
+            customerId: req.body.customerId,
             details: [{
               status: 'discarded',
               datetime:today
             }]
           });
       //save Advertisement data in dbs
-      let newAddDiscard = await discardAdd.save();
-      if (!newAddDiscard) throw new Error('Error in data adding...');
+      let newAddOpen = await openAdd.save();
+      if (!newAddOpen) throw new Error('Error in data adding...');
       res.json({
         success: true,
         message: "Advertisement data successfully added..."
+        //data: openAdd
       });
     } catch (err) {
       return res.json({
         success: false,
-        message: "Error in adding data.."
+        message: err.toString()
       })
     }
   }
