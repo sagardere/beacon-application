@@ -187,7 +187,7 @@ module.exports = () => {
       }
       var today = new Date();
       let discardAdd = new AdvertisementData({
-            campaignID: campaignId,
+            campaignId: campaignId,
             customerId: customerId,
             details: [{
               status: 'discarded',
