@@ -102,7 +102,7 @@ module.exports = () => {
       let advertisementId = req.body.advertisementId || '';
       let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
-      let daysOfWeek = req.body.daysOfWeek || 'ALL';
+      let daysOfWeek = req.body.daysOfWeek || 'allday';
       let gender = req.body.gender || '';
       let minage = req.body.minage || '-1';
       let maxage = req.body.maxage || '100';

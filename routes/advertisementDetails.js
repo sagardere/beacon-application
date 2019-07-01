@@ -61,7 +61,7 @@ module.exports = () => {
 
 
             console.log(day);
-            if (day == -1 && data[0]['schedule']['daysOfWeek'].indexOf("ALL") == -1) {
+            if (day == -1 && data[0]['schedule']['daysOfWeek'].indexOf("allday") == -1) {
               res.json({
                 success: false,
                 message: "No campaign for today"

@@ -35,7 +35,7 @@ var campaign = new mongoose.Schema({
     },
     daysOfWeek: [{
       type: String,
-      enum: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','ALL']
+      enum: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday','allday']
     }]
   },
   gender: [{
