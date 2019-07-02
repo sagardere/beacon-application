@@ -191,10 +191,10 @@ module.exports = () => {
       let advertisementId = req.body.advertisementId || '';
       //let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
-      let daysOfWeek = req.body.daysOfWeek || '';
+      let daysOfWeek = req.body.daysOfWeek || 'allday';
       let gender = req.body.gender || '';
-      let minage = req.body.minage || '';
-      let maxage = req.body.maxage || '';
+      let minage = req.body.minage || '-1';
+      let maxage = req.body.maxage || '100';
       let status = req.body.status || '';
       let obj = {
         advertisementId: advertisementId,
