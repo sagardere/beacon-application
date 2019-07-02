@@ -103,7 +103,7 @@ module.exports = () => {
       let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
       let daysOfWeek = req.body.daysOfWeek || 'allday';
-      let gender = req.body.gender || '';
+      let gender = req.body.gender || 'any';
       let minage = req.body.minage || '-1';
       let maxage = req.body.maxage || '100';
       let status = req.body.status || '';
@@ -192,7 +192,7 @@ module.exports = () => {
       //let beaconId = req.body.beaconId || '';
       let campaignTitle = req.body.campaignTitle || '';
       let daysOfWeek = req.body.daysOfWeek || 'allday';
-      let gender = req.body.gender || '';
+      let gender = req.body.gender || 'any';
       let minage = req.body.minage || '-1';
       let maxage = req.body.maxage || '100';
       let status = req.body.status || '';
