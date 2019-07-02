@@ -92,11 +92,13 @@ module.exports = () => {
         console.log("in if part")
         var startTime = new Date(startDate);
         startTime.setHours(parseInt(req.body.startTime));
+        startTime.setMinutes(parseInt(req.body.startTime));
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
         endTime.setHours(parseInt(req.body.endTime));
+        endTime.setMinutes(parseInt(req.body.endTime));
       }
       let userId = req.body.id || '';
       let advertisementId = req.body.advertisementId || '';
@@ -181,11 +183,13 @@ module.exports = () => {
         console.log("in if part")
         var startTime = new Date(startDate);
         startTime.setHours(parseInt(req.body.startTime));
+        //startTime.setMinutes(parseInt(req.body.startTime));
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
         endTime.setHours(parseInt(req.body.endTime));
+        //endTime.setMinutes(parseInt(req.body.endTime));
       }
       let campaignId = req.body.campaignId;
       let advertisementId = req.body.advertisementId || '';
