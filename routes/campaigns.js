@@ -91,14 +91,16 @@ module.exports = () => {
       if ((req.body.startTime != "") && (req.body.startTime != undefined)) {
         console.log("in if part")
         var startTime = new Date(startDate);
-        startTime.setHours(parseInt(req.body.startTime));
-        //startTime.setMinutes(parseInt(req.body.startTime));
+        //startTime.setHours(parseInt(req.body.startTime));
+        var a = helper.splittime(req.body.startTime);
+        startTime.setHours(a[0],a[1]);
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
-        endTime.setHours(parseInt(req.body.endTime));
-        //endTime.setMinutes(parseInt(req.body.endTime));
+        //endTime.setHours(parseInt(req.body.endTime));
+        var b = helper.splittime(req.body.endTime);
+        endTime.setHours(b[0],b[1]);
       }
       let userId = req.body.id || '';
       let advertisementId = req.body.advertisementId || '';
@@ -188,14 +190,12 @@ module.exports = () => {
       if ((req.body.startTime != "") && (req.body.startTime != undefined)) {
         console.log("in if part")
         var startTime = new Date(startDate);
-        //startTime.setHours(parseInt(req.body.startTime));
         var a = helper.splittime(req.body.startTime);
         startTime.setHours(a[0],a[1]);
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
-        //endTime.setHours(parseInt(req.body.endTime));
         var b = helper.splittime(req.body.endTime);
         endTime.setHours(b[0],b[1]);
       }
