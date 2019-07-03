@@ -92,13 +92,13 @@ module.exports = () => {
         console.log("in if part")
         var startTime = new Date(startDate);
         startTime.setHours(parseInt(req.body.startTime));
-        startTime.setMinutes(parseInt(req.body.startTime));
+        //startTime.setMinutes(parseInt(req.body.startTime));
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
         endTime.setHours(parseInt(req.body.endTime));
-        endTime.setMinutes(parseInt(req.body.endTime));
+        //endTime.setMinutes(parseInt(req.body.endTime));
       }
       let userId = req.body.id || '';
       let advertisementId = req.body.advertisementId || '';
@@ -173,6 +173,12 @@ module.exports = () => {
       if (!req.body || !req.body.campaignId) {
         throw new Error('campaignId not defined.');
       }
+      if (!req.body || !req.body.startDate) {
+        throw new Error('startDate not defined.');
+      }
+      if (!req.body || !req.body.endDate) {
+        throw new Error('endDate not defined.');
+      }
       if ((req.body.startDate != "") && (req.body.startDate != undefined)) {
         var startDate = helper.stringToDate(req.body.startDate);
       }
@@ -182,14 +188,16 @@ module.exports = () => {
       if ((req.body.startTime != "") && (req.body.startTime != undefined)) {
         console.log("in if part")
         var startTime = new Date(startDate);
-        startTime.setHours(parseInt(req.body.startTime));
-        //startTime.setMinutes(parseInt(req.body.startTime));
+        //startTime.setHours(parseInt(req.body.startTime));
+        var a = helper.splittime(req.body.startTime);
+        startTime.setHours(a[0],a[1]);
       }
       if ((req.body.endTime != "") && (req.body.endTime != undefined)) {
         console.log("in if part")
         var endTime = new Date(endDate);
-        endTime.setHours(parseInt(req.body.endTime));
-        //endTime.setMinutes(parseInt(req.body.endTime));
+        //endTime.setHours(parseInt(req.body.endTime));
+        var b = helper.splittime(req.body.endTime);
+        endTime.setHours(b[0],b[1]);
       }
       let campaignId = req.body.campaignId;
       let advertisementId = req.body.advertisementId || '';
