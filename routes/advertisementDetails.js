@@ -70,7 +70,7 @@ module.exports = () => {
             } else if (((data[0]['targetAge']['minage'] <= presentAge) && (data[0]['targetAge']['maxage'] >= presentAge)) ) {
               if ((ISOstartDate <= ISOdate) && (ISOendDate >= ISOdate)) {
                 if ((ISOstartTime <= ISOdate) && (ISOendTime >= ISOdate)) {
-                  if (data[0]['gender'].includes(gender)) {
+                  if (data[0]['gender'].includes(gender) || data[0]['gender'].includes('any')) {
                     let advertisementId = data[0]['advertisementId'];
                     callback(null, advertisementId);
                   } else {
