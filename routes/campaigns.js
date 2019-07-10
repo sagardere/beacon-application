@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const _ = require('lodash');
 let models = require('../models/index')();
 let User = models.user();
 let Campaign = models.campaign();
@@ -55,6 +56,70 @@ module.exports = () => {
           data: list
         });
       });
+    } catch (err) {
+      console.log(err)
+      return res.json({
+        success: false,
+        message: err.toString()
+      })
+    }
+  }
+
+    result.usercampaignsList = async (req, res) => {
+    console.log("Inside user campaigns list");
+    try {
+      const userId = req.body.id;
+      const pagenumber = req.body.pagenumber;
+      var list = [];
+      
+      if(pagenumber == 1){
+        console.log("page number 1");
+        let campaignData = await Campaign.find({
+        userId: userId
+      }).limit(20).sort({'schedule.startDate':-1});
+        main(campaignData);
+      } else if(pagenumber == 2){
+        console.log("page number 2");
+        let campaignData = await Campaign.find({
+        userId: userId
+      }).skip(20).limit(20).sort({'schedule.startDate':-1});
+        main(campaignData);
+      }
+
+      function main(data) {
+        asyncmodel.eachSeries(data, async (campaign, eachCB) => {
+        let obj = {};
+        obj.campaignId = campaign._id;
+        obj.campaignTitle = campaign.campaignTitle;
+        obj.startDate = campaign.schedule.startDate;
+        obj.endDate = campaign.schedule.endDate;
+        obj.startTime = campaign.schedule.startTime;
+        obj.endTime = campaign.schedule.endTime;
+        obj.daysOfWeek = campaign.schedule.daysOfWeek;
+        let advertisementId = new ObjectId(campaign.advertisementId);
+        let beaconId = campaign.beaconId;
+        let advertisementTitle = await Advertisement.findOne({_id: advertisementId}, 
+          {advertisementTitle: 1,_id: 0});
+        let name = await Beacon.find({_id: beaconId}, 
+          {name: 1,_id: 0});
+        if (!advertisementTitle) advertisementTitle = '';
+        if (!name) name = '';
+        obj.advertisementTitle = advertisementTitle;
+        obj.name = name;
+        list.push(obj);
+        //eachCB();
+      }, (err, data) => {
+        console.log(list)
+        // var sort =  _.sortBy(list,(campaigns) => {
+        //   return campaigns.startDate
+        // }).reverse();
+        // console.log(sort);
+        res.json({
+          success: true,
+          data: list
+        });
+      });
+      }
     } catch (err) {
       console.log(err)
       return res.json({

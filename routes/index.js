@@ -40,6 +40,7 @@ router.post('/campaignDetails', isLoggedIn, campaignController.campaignDetails);
 router.post('/update_campaign', isLoggedIn, campaignController.updateCampaign);
 router.post('/assignBeacon', isLoggedIn, campaignController.assignBeacon);
 router.post('/campaignsList', isLoggedIn, campaignController.campaignList);
+router.post('/usercampaignsList',isLoggedIn, campaignController.usercampaignsList);
 
 //customer
 router.post('/registerCustomer', customerController.registerCustomer);
