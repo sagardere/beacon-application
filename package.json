@@ -17,7 +17,7 @@
     "express": "~4.16.0",
     "express-session": "^1.16.1",
     "fs": "0.0.1-security",
-    "googleapis": "^38.0.0",
+    "googleapis": "^39.1.0",
     "http": "0.0.0",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.5.1",
